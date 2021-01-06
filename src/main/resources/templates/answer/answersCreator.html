@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Results')}"></div>
+<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<body class="bg-light">
+<div class="container">
+    <div class="d-flex flex-row my-3 mx-3">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+
+            <form method="post" th:action="@{/answer/new/{gamePatternId}/{questionId}
+                    (questionId = ${questionId}, gamePatternId = ${gamePatternId})}">
+                <p></p>
+                <input type="text" name="context" placeholder="context">
+                <p></p>
+                <div class="col-sm-8">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <p></p>
+                    <a th:href="@{/question/relativeQuestions/{gamePatternId}/{questionId}
+                    (questionId = ${questionId}, gamePatternId = ${gamePatternId})}" class="btn btn-primary">
+                        <span>Next</span>
+                    </a>
+                    <p></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Context</th>
+            <span th:each="qv,iter : ${parameters}">
+                <th th:text="${qv.getTitle()}"></th>
+            </span>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="answer,answerIter : ${answers}">
+            <td th:text="${answer.getContext()}"></td>
+            <span th:each="qv,iter : ${answer.getParameters()}">
+                <td th:text="${qv.getValue()}"></td>
+            </span>
+            <td>
+                <form th:action="@{/answer/delete/{gamePatternId}/{questionId}/{answerId}(questionId = ${questionId}, gamePatternId = ${gamePatternId}, answerId = ${answer.getId()})}" method="post">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<div th:replace="~{/components/common :: js-lb}"></div>
+</html>

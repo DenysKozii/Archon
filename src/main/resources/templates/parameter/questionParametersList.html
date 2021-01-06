@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Results')}"></div>
+<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<body>
+<div class="container">
+    <p></p>
+    <a th:href="@{/answer/new/{gamePatternId}/{questionId}
+                    (questionId = ${questionId}, gamePatternId = ${gamePatternId})}"
+       class="btn btn-primary">
+        <span>Next</span>
+    </a>
+    <p></p>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Appear</th>
+            <th scope="col">Disappear</th>
+            <th scope="col">Update</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="qv,iter : ${parameters}">
+            <form method="post"
+                  th:action="@{/questionParameter/update/{gamePatternId}/{questionId}/{parameterId}(gamePatternId = ${gamePatternId},questionId = ${questionId}, parameterId = ${qv.getId()})}">
+                <td th:text="${qv.getTitle()}"></td>
+                <td>
+                    <div class="form-group">
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueAppear()}"
+                               name="appear" required=""/>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueDisappear()}"
+                               name="disappear"/>
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Profile')}"></div>
+<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<body>
+<div class="bg-light">
+    <div class="container bg-light">
+        <br/>
+        <div th:if="${error}">
+            <div class="alert alert-danger" th:text="${error}"></div>
+        </div>
+        <div th:if="${success}">
+            <div class="alert alert-success" th:text="${success}"></div>
+        </div>
+        <form method="post" action="/friends/invite">
+            <h2 class="h5 font-weight-normal">Invite ser by email</h2>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Email: </label>
+                <div class="col-sm-8">
+                    <input type="text" name="email" th:placeholder="${username}">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Invite</button>
+        </form>
+        <hr class="my-4">
+        <h3 class="h5 mb-3 font-weight-normal">Friends:</h3>
+        <a th:href="@{/friends/invite/list}" class="btn btn-primary">
+            <span>Invite</span>
+        </a>
+        <a th:href="@{/friends/accept/list}" class="btn btn-primary">
+            <span>Accept</span>
+        </a>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Email</th>
+                <th scope="col">Start new game</th>
+                <th scope="col">Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="qv,iter : ${friends}">
+                <td th:text="${qv}"></td>
+                <td>
+                    <div th:if="${main}">
+                        <a th:href="@{/gamePattern/list/{userEmail}(userEmail = ${qv})}" class="btn btn-primary">
+                            <span>Start</span>
+                        </a>
+                    </div>
+                </td>
+                <td>
+                    <form th:action="@{/friends/delete/{userEmail}(userEmail = ${qv})}" method="post">
+                        <button type="submit" class="btn btn-primary">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+<div th:replace="~{/components/common :: js-lb}"></div>
+</html>

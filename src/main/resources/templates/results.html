@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Results')}"></div>
+<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<body class="bg-light">
+<div class="container">
+    <br/>
+    <div th:class="${win} ? 'alert alert-success' : 'alert alert-danger'" role="alert" th:text="${verdict}"></div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Question</th>
+            <th scope="col">Your answer</th>
+            <th scope="col">Correct answer</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="qv,iter : ${questions}">
+            <td th:text="${iter.index} + 1"></td>
+            <td th:text="${qv.getContext()}"></td>
+            <td th:if="${(iter.index) < #lists.size(answers)}"
+                th:text="${answers.get(__${iter.index}__).getContext()}"></td>
+            <td th:unless="${(iter.index) < #lists.size(answers)}" th:text="''"></td>
+            <td th:text="${qv.getCorrectAnswer().getContext()}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<div th:replace="~{/components/common :: js-lb}"></div>
+</html>

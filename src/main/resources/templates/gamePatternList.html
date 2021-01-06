@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Results')}"></div>
+<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<body>
+<div class="container">
+    <div class="d-flex flex-row my-3 mx-3">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <form method="post" action="/gamePattern/new">
+                <div class="col-sm-8">
+                    <input type="text" name="title" placeholder="Title">
+                </div>
+                <p></p>
+                <div class="col-sm-8">
+                    <input type="text" name="usersAmount" placeholder="Amount of users">
+                </div>
+                <p></p>
+                <div class="col-sm-8">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Questions</th>
+            <th scope="col">Saves</th>
+            <th scope="col">Start new game</th>
+            <th scope="col">Delete</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="qv,iter : ${games}">
+            <td th:text="${iter.index} + 1"></td>
+            <td th:text="${qv.getTitle()}"></td>
+            <td>
+                <a th:href="@{/question/list/{id}(id = ${qv.getId()})}" class="btn btn-primary">
+                    <span>Questions</span>
+                </a>
+            </td>
+            <td>
+                <a th:href="@{/question/list/{id}(id = ${qv.getId()})}" class="btn btn-primary">
+                    <span>Saves</span>
+                </a>
+            </td>
+            <td>
+                <div th:if="${friendEmail != null}">
+                    <a th:href="@{/game/new/{id}/{friendEmail}(id = ${qv.getId()}, friendEmail = ${friendEmail})}" class="btn btn-primary">
+                        <span>Start</span>
+                    </a>
+                </div>
+                <div th:if="${friendEmail == null}">
+                    <a th:href="@{/game/new/{id}(id = ${qv.getId()})}" class="btn btn-primary">
+                        <span>Start</span>
+                    </a>
+                </div>
+            </td>
+            <td>
+                <form th:action="@{/gamePattern/delete/{id}(id = ${qv.getId()})}" method="post">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

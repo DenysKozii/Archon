@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Results')}"></div>
+<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<body>
+<div class="container">
+    <div class="d-flex flex-row my-3 mx-3">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <a th:href="@{/question/new/{gamePatternId}(gamePatternId = ${gamePatternId})}" class="btn btn-primary">
+                <span>Create</span>
+            </a>
+        </div>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Context</th>
+            <th scope="col">Update</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="qv,iter : ${questions}">
+            <td th:text="${iter.index} + 1"></td>
+            <td th:text="${qv.getTitle()}"></td>
+            <td th:text="${qv.getContext()}"></td>
+            <td>
+                <a th:href="@{/question/list/{id}(id = ${qv.getId()})}" class="btn btn-primary">
+                    <span>Update</span>
+                </a>
+            </td>
+            <td>
+                <form th:action="@{/question/delete/{gamePatternId}/{questionId}(gamePatternId = ${gamePatternId}, questionId = ${qv.getId()})}" method="post">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

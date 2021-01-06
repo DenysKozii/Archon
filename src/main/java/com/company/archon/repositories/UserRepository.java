@@ -1,0 +1,18 @@
+package com.company.archon.repositories;
+
+import com.company.archon.entity.GamePattern;
+import com.company.archon.entity.User;
+import liquibase.pro.packaged.O;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByUsername(String username);
+
+    Optional<User> findByEmail(String username);
+
+    List<User> findAllByGamePatterns(GamePattern gamePattern);
+
+}

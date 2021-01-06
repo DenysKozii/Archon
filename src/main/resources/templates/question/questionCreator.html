@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Register')}"></div>
+<body class="bg-light">
+<div class="container">
+    <div class="py-5 text-center">
+        <div class="col-5 mx-auto">
+            <form th:action="@{/question/new/{gamePatternId}/{questionId}(gamePatternId = ${gamePatternId}, questionId = ${id})}" class="needs-validation" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="title"
+                           name="title" required=""/>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="context"
+                           name="context" required=""/>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" placeholder="weight"
+                           name="weight" required=""/>
+                </div>
+<!--                <div class="form-group">-->
+<!--                    <div class="custom-file">-->
+<!--                        <label class="custom-file-label" for="fileImage">Choose file</label>-->
+<!--                        <input type="file" class="custom-file-input" id="fileImage"-->
+<!--                               name="fileImage"-->
+<!--                               accept="image/png, image/jpeg, image/jpg"-->
+<!--                               aria-describedby="inputGroupFileAddon01">-->
+<!--                    </div>-->
+<!--                </div>-->
+                <button type="submit" class="btn btn-lg btn-primary btn-block">Next</button>
+                <br/>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<div th:replace="~{/components/common :: js-lb}"></div>
+</html>
