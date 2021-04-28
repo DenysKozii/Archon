@@ -16,6 +16,8 @@ public class GameParameter extends BaseEntity{
 
     private Integer value;
 
+    private Boolean visible = false;
+
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.EAGER)

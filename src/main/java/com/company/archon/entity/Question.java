@@ -4,9 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity
@@ -22,7 +20,9 @@ public class Question extends BaseEntity{
     @NonNull
     private String context;
 
-    private String image;
+    @ManyToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -30,26 +30,20 @@ public class Question extends BaseEntity{
     @JoinTable(name = "question_conditions",
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "condition_id", referencedColumnName = "id"))
-    private List<Question> questionConditions;
+    private List<Question> questionConditions = new ArrayList<>();
 
     @Transient
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "question")
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList<>();
 
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="questions")
+    @ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name="game_pattern")
     private GamePattern gamePattern;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="questionsPull")
-    private Game game;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -62,7 +56,7 @@ public class Question extends BaseEntity{
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
-    private List<QuestionParameter> questionParameters;
+    private List<QuestionParameter> questionParameters = new ArrayList<>();
 
     private Integer weight;
 

@@ -1,15 +1,17 @@
 package com.company.archon.repositories;
 
 import com.company.archon.entity.FriendRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface FriendRequestRepository extends JpaRepository<FriendRequest, Long> {
-    Optional<FriendRequest> findByInvitorEmailAndAcceptorEmail(String invitorEmail, String acceptorEmail);
+public interface FriendRequestRepository extends JpaRepository<FriendRequest, Long>, PagingAndSortingRepository<FriendRequest, Long> {
+    Optional<FriendRequest> findByInvitorUsernameAndAcceptorUsername(String invitorUsername, String acceptorUsername);
 
-    List<FriendRequest> findAllByAcceptorEmail(String email);
+    Page<FriendRequest> findAllByAcceptorUsername(String email, Pageable pageable);
 
-    List<FriendRequest> findAllByInvitorEmail(String email);
+    Page<FriendRequest> findAllByInvitorUsername(String email, Pageable pageable);
 }

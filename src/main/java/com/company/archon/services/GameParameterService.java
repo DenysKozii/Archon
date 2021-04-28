@@ -7,4 +7,6 @@ import java.util.List;
 public interface GameParameterService {
 
     List<GameParameterDto> getByGameId(Long id);
+
+    boolean deleteById(Long id);
 }

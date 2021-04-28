@@ -1,18 +1,16 @@
 package com.company.archon.services;
 
-import com.company.archon.dto.GameDto;
-import com.company.archon.dto.ParameterDto;
-import com.company.archon.dto.QuestionDto;
-import com.company.archon.entity.User;
 
-import java.util.List;
+import com.company.archon.dto.ParameterDto;
+import com.company.archon.pagination.PageDto;
 
 public interface ParameterService {
 
-    List<ParameterDto> getParametersByGamePatternId(Long gamePatternId);
+    PageDto<ParameterDto> getParametersByGamePatternId(Long gamePatternId);
 
+    boolean deleteById(Long parameterId);
 
-    boolean deleteParameter(Long parameterId);
+    boolean create(ParameterDto parameterDto);
 
-    boolean createParameter(String title, Integer defaultValue, Integer highestValue, Integer lowestValue, Long gamePatternId);
+    boolean create(String title, Integer defaultValue, Integer highestValue, Integer lowestValue, Boolean visible, Long gamePatternId);
 }

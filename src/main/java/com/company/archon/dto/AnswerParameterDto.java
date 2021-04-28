@@ -1,6 +1,5 @@
 package com.company.archon.dto;
 
-import com.company.archon.entity.Game;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -21,5 +20,4 @@ public class AnswerParameterDto extends BaseDto {
 
     private Integer value;
 
-//    private AnswerDto answer;
 }

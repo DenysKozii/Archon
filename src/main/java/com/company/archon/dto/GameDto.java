@@ -1,18 +1,15 @@
 package com.company.archon.dto;
 
-import com.company.archon.entity.GameParameter;
-import com.company.archon.entity.GamePattern;
-import com.company.archon.entity.Question;
-import com.company.archon.entity.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
+import com.company.archon.enums.GameStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -22,13 +19,16 @@ import java.util.Set;
 @JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class GameDto extends BaseDto{
 
+    private String title;
 
-//    private Set<UserDto> users;
-//
-//    private List<QuestionDto> questionsPull;
+    private GameStatus gameStatus;
 
-    private GamePatternDto gamePattern;
+    private Long gamePatternId;
 
-//    private List<GameParameterDto> parameters;
+    private QuestionDto question;
+
+    private List<AnswerDto> answers;
+
+    private List<GameParameterDto> parameters;
 
 }

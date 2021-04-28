@@ -8,7 +8,7 @@
 <body>
 <nav th:fragment="navbar(game)" class="navbar navbar-expand-lg navbar-light" style="background-color: #ededed;">
     <a class="navbar-brand" href="#">
-        Archon
+        Soul RPG
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,21 +17,20 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item active">
-                <a th:class="${game}? 'nav-link disabled' : 'nav-link'" href="/profile">Home<span class="sr-only">(current)</span></a>
+                <a th:class="${game}? 'nav-link disabled' : 'nav-link'" href="/profile">Profile<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a th:class="${game}? 'nav-link disabled' : 'nav-link'" href="/gamePattern/list">Menu</a>
+                <a th:class="${game}? 'nav-link disabled' : 'nav-link'" href="/gamePattern/list">Plots</a>
             </li>
             <li class="nav-item">
-                <a th:class="${game}? 'nav-link disabled' : 'nav-link'" href="/gamePattern/list">Shop</a>
+                <a th:class="${game}? 'nav-link disabled' : 'nav-link'" href="/gamePattern/list">Start game</a>
             </li>
             <li th:if="${game}">
                 <a class="nav-link" href="/gamePattern/list">End Game</a>
             </li>
         </ul>
     </div>
-    <div class="navbar-text" th:text="${email}"></div>
-    <form th:action="@{/logout}" method="post">
+    <form th:action="@{/}" method="get">
         <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
         <button type="submit" class="btn btn-outline-secondary ml-3">Log out</button>
     </form>

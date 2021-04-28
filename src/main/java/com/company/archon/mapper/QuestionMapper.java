@@ -2,7 +2,6 @@ package com.company.archon.mapper;
 
 import com.company.archon.dto.QuestionDto;
 import com.company.archon.entity.Question;
-import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

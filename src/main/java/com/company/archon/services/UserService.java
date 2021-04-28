@@ -1,14 +1,16 @@
 package com.company.archon.services;
 
 import com.company.archon.dto.UserDto;
-import com.company.archon.entity.User;
-
-import java.util.List;
+import com.company.archon.dto.user.LoginRequest;
+import com.company.archon.dto.user.UserProfileDto;
+import com.company.archon.pagination.PageDto;
 
 public interface UserService {
 
-    boolean addUser(User user);
+    UserProfileDto loginUser(LoginRequest request);
 
-    List<String> getFriendsByUserEmail(String email);
+    boolean addUser(UserDto user);
+
+    PageDto<String> getFriendsByUsername(int page, int pageSize);
 
 }

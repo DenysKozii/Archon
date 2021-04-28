@@ -1,27 +1,23 @@
 package com.company.archon.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Data
-@Table(name = "friend_request")
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class FriendRequest {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Table(name = "friend_request")
+public class FriendRequest extends BaseEntity{
 
     @NonNull
-    private String invitorEmail;
+    private String invitorUsername;
 
     @NonNull
-    private String acceptorEmail;
+    private String acceptorUsername;
 
     @NonNull
     private Boolean status;

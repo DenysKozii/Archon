@@ -1,12 +1,12 @@
 package com.company.archon.services;
 
-import com.company.archon.dto.AnswerParameterDto;
 
-import java.util.List;
+import com.company.archon.dto.AnswerParameterDto;
+import com.company.archon.pagination.PageDto;
 
 public interface AnswerParameterService {
 
     boolean update(Long parameterId, Integer value);
 
-    List<AnswerParameterDto> getParametersByAnswerId(Long id);
+    PageDto<AnswerParameterDto> getParametersByAnswerId(Long id, int page, int pageSize);
 }

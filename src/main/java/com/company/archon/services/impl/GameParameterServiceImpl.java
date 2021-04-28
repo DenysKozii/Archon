@@ -8,9 +8,8 @@ import com.company.archon.mapper.GameParameterMapper;
 import com.company.archon.repositories.GameParameterRepository;
 import com.company.archon.repositories.GameRepository;
 import com.company.archon.services.GameParameterService;
-import com.company.archon.services.GamePatternService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +19,10 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional
+@RequiredArgsConstructor
 public class GameParameterServiceImpl implements GameParameterService {
     private final GameParameterRepository gameParameterRepository;
     private final GameRepository gameRepository;
-
-    @Autowired
-    public GameParameterServiceImpl(GameParameterRepository gameParameterRepository, GameRepository gameRepository) {
-        this.gameParameterRepository = gameParameterRepository;
-        this.gameRepository = gameRepository;
-    }
 
     @Override
     public List<GameParameterDto> getByGameId(Long id) {
@@ -37,5 +31,15 @@ public class GameParameterServiceImpl implements GameParameterService {
         return gameParameterRepository.findAllByGame(game).stream()
                 .map(GameParameterMapper.INSTANCE::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean deleteById(Long id) {
+        GameParameter gameParameter = gameParameterRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("GameParameter with id " + id + " not found"));
+        gameParameter.setParameter(null);
+        gameParameterRepository.save(gameParameter);
+        gameParameterRepository.delete(gameParameter);
+        return true;
     }
 }

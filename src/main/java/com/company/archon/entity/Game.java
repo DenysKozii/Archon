@@ -1,12 +1,14 @@
 package com.company.archon.entity;
 
-import lombok.*;
+import com.company.archon.enums.GameStatus;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -15,10 +17,13 @@ import java.util.Set;
 @Table(name = "games")
 public class Game extends BaseEntity{
 
+    private GameStatus gameStatus;
+
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(mappedBy = "games", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<User> users = new HashSet<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Transient
     @ToString.Exclude
@@ -32,11 +37,17 @@ public class Game extends BaseEntity{
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_game_pattern")
+    @JoinColumn(name = "game_pattern_id")
     private GamePattern gamePattern;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "game")
-    private List<GameParameter> parameters;
+    private List<GameParameter> parameters = new ArrayList<>();
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_game_request")
+    private GameRequest gameRequest;
 }

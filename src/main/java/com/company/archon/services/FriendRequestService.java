@@ -1,16 +1,16 @@
 package com.company.archon.services;
 
-import java.util.List;
+import com.company.archon.pagination.PageDto;
 
 public interface FriendRequestService {
-    boolean inviteByEmail(String userEmail, String friendEmail);
+    boolean inviteByUsername(String friendUsername);
 
-    boolean acceptByEmail(String userEmail, String friendEmail);
+    boolean acceptByUsername(String friendUsername);
 
-    boolean deleteByEmail(String userEmail, String friendEmail);
+    boolean deleteByUsername(String friendUsername);
 
-    List<String> acceptList(String email);
+    PageDto<String> acceptList(int page, int pageSize);
 
-    List<String> inviteList(String email);
+    PageDto<String> inviteList(int page, int pageSize);
 
 }

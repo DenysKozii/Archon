@@ -2,11 +2,11 @@ package com.company.archon.entity;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.*;
 
 @Entity
@@ -27,14 +27,6 @@ public class User extends BaseEntity implements UserDetails{
 
     @NonNull
     @NotBlank(message = "Must not be empty")
-    @Email
-    @Pattern(regexp = ".+@.+\\..+", message = "Please provide a valid email address")
-    @Column(unique = true)
-    private String email;
-    private String activationCode;
-
-    @NonNull
-    @NotBlank(message = "Must not be empty")
     @Size(min = 3, message = "Password is not strong enough")
     @Column(name = "password")
     private String password;
@@ -48,20 +40,16 @@ public class User extends BaseEntity implements UserDetails{
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean active;
-
+    @Transient
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "game_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "game_id"))
-    private Set<Game> games;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private Set<Game> games = new HashSet<>();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<GamePattern> gamePatterns;
+    private Set<GamePattern> gamePatterns = new HashSet<>();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -69,7 +57,7 @@ public class User extends BaseEntity implements UserDetails{
     @JoinTable(name = "user_friend",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName="id"))
-    private List<User> friends;
+    private List<User> friends = new ArrayList<>();
 
 
     @ToString.Exclude
@@ -78,7 +66,7 @@ public class User extends BaseEntity implements UserDetails{
     @JoinTable(name = "invite_friend",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName="id"))
-    private List<FriendRequest> invite;
+    private List<FriendRequest> invite = new ArrayList<>();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -86,7 +74,7 @@ public class User extends BaseEntity implements UserDetails{
     @JoinTable(name = "accept_friend",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName="id"))
-    private List<FriendRequest> accept;
+    private List<FriendRequest> accept = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -95,7 +83,7 @@ public class User extends BaseEntity implements UserDetails{
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override
@@ -115,6 +103,6 @@ public class User extends BaseEntity implements UserDetails{
 
     @Override
     public boolean isEnabled() {
-        return active;
+        return true;
     }
 }

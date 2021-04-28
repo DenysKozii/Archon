@@ -1,16 +1,15 @@
 package com.company.archon.services;
 
-import com.company.archon.dto.GamePatternDto;
-import com.company.archon.entity.User;
 
-import java.util.List;
+import com.company.archon.dto.GamePatternDto;
+import com.company.archon.pagination.PageDto;
 
 public interface GamePatternService {
-    GamePatternDto createGamePattern(String title, Integer usersAmount, User user);
+    GamePatternDto createGamePattern(String title);
 
-    List<GamePatternDto> getGamePatternsByUser(User user);
+    PageDto<GamePatternDto> getGamePatterns(int page, int pageSize);
 
-    boolean deleteGamePattern(Long gamePatternId);
+    boolean deleteById(Long gamePatternId);
 
-    List<GamePatternDto> getGamePatternsByUser(User user, String userEmail);
+    boolean updateAvailable(Long gamePatternId);
 }

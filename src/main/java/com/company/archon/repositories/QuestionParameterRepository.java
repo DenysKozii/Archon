@@ -1,14 +1,16 @@
 package com.company.archon.repositories;
 
-import com.company.archon.entity.Game;
 import com.company.archon.entity.Question;
 import com.company.archon.entity.QuestionParameter;
-import com.company.archon.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface QuestionParameterRepository extends JpaRepository<QuestionParameter, Long> {
+public interface QuestionParameterRepository extends JpaRepository<QuestionParameter, Long>, PagingAndSortingRepository<QuestionParameter, Long> {
     List<QuestionParameter> findAllByQuestion(Question question);
+
+    Page<QuestionParameter> findAllByQuestion(Question question, Pageable pageable);
 }

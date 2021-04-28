@@ -1,12 +1,12 @@
 package com.company.archon.services;
 
-import com.company.archon.dto.QuestionParameterDto;
 
-import java.util.List;
+import com.company.archon.dto.QuestionParameterDto;
+import com.company.archon.pagination.PageDto;
 
 public interface QuestionParameterService {
 
-    List<QuestionParameterDto> getParametersByQuestionId(Long questionId);
+    PageDto<QuestionParameterDto> getParametersByQuestionId(Long questionId, int page, int pageSize);
 
     boolean update(Long parameterId, Integer appear, Integer disappear);
 }

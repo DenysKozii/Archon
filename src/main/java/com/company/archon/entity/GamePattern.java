@@ -1,6 +1,9 @@
 package com.company.archon.entity;
 
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,11 +19,15 @@ import java.util.Set;
 @Table(name = "game_patterns")
 public class GamePattern extends BaseEntity {
 
+    private Long orderId;
+
     @NotNull
     private String title;
 
     @NotNull
     private Integer usersAmount;
+
+    private Boolean deleted;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -30,20 +37,20 @@ public class GamePattern extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> users = new HashSet<>();
 
-    @Transient
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "gamePattern")
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy = "gamePattern")
     private List<Question> questions = new ArrayList<>();
 
     @Transient
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "gamePattern")
+    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "gamePattern")
     private List<Game> games = new ArrayList<>();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "gamePattern")
-    private List<Parameter> parameters;
+    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "gamePattern")
+    private List<Parameter> parameters = new ArrayList<>();
+
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Results')}"></div>
+<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<body>
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Continue</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="qv,iter : ${games}">
+            <td th:text="${iter.index} + 1"></td>
+            <td th:text="${qv.getTitle()}"></td>
+            <td>
+                <form th:action="@{/gamePattern/list}" method="get">
+                    <button type="submit" class="btn btn-primary">Continue</button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/gamePattern/list}" method="get">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

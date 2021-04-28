@@ -3,6 +3,7 @@ package com.company.archon.controllers.parameters;
 import com.company.archon.dto.ParameterDto;
 import com.company.archon.dto.QuestionParameterDto;
 import com.company.archon.entity.User;
+import com.company.archon.pagination.PageDto;
 import com.company.archon.services.ParameterService;
 import com.company.archon.services.QuestionParameterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +32,12 @@ public class QuestionParameterController {
                          @PathVariable Long questionId,
                          @PathVariable Long parameterId,
                          @RequestParam Integer appear,
-                         @RequestParam Integer disappear,
-                         @AuthenticationPrincipal User user, Model model) {
+                         @RequestParam Integer disappear, Model model) {
         questionParameterService.update(parameterId, appear, disappear);
-        List<QuestionParameterDto> questionParameters = questionParameterService.getParametersByQuestionId(questionId);
+        PageDto<QuestionParameterDto> questionParameters = questionParameterService.getParametersByQuestionId(questionId,0,150);
         model.addAttribute("gamePatternId", gamePatternId);
         model.addAttribute("questionId", questionId);
-        model.addAttribute("parameters", questionParameters);
+        model.addAttribute("parameters", questionParameters.getObjects());
         return "parameter/questionParametersList";
     }
 

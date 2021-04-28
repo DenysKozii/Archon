@@ -1,5 +1,6 @@
 package com.company.archon.entity;
 import org.springframework.security.core.GrantedAuthority;
+
 /**
  * Date: 07.09.2020
  *

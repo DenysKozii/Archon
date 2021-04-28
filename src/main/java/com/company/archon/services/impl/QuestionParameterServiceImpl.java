@@ -5,12 +5,14 @@ import com.company.archon.entity.Question;
 import com.company.archon.entity.QuestionParameter;
 import com.company.archon.exception.EntityNotFoundException;
 import com.company.archon.mapper.QuestionParameterMapper;
+import com.company.archon.pagination.PageDto;
+import com.company.archon.pagination.PagesUtility;
 import com.company.archon.repositories.QuestionParameterRepository;
 import com.company.archon.repositories.QuestionRepository;
 import com.company.archon.services.QuestionParameterService;
-import liquibase.pro.packaged.L;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,21 +22,22 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional
+@AllArgsConstructor
 public class QuestionParameterServiceImpl implements QuestionParameterService {
     private final QuestionParameterRepository questionParameterRepository;
     private final QuestionRepository questionRepository;
 
-    @Autowired
-    public QuestionParameterServiceImpl(QuestionParameterRepository questionParameterRepository, QuestionRepository questionRepository) {
-        this.questionParameterRepository = questionParameterRepository;
-        this.questionRepository = questionRepository;
-    }
-
     @Override
-    public List<QuestionParameterDto> getParametersByQuestionId(Long questionId) {
+    public PageDto<QuestionParameterDto> getParametersByQuestionId(Long questionId, int page, int pageSize) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
-        return questionParameterRepository.findAllByQuestion(question).stream()
+
+        Page<QuestionParameter> result = questionParameterRepository.findAllByQuestion(question, PagesUtility.createPageableUnsorted(page, pageSize));
+        return PageDto.of(result.getTotalElements(), page, mapToDto(result.getContent()));
+    }
+
+    private List<QuestionParameterDto> mapToDto(List<QuestionParameter> questions) {
+        return questions.stream()
                 .map(QuestionParameterMapper.INSTANCE::mapToDto)
                 .collect(Collectors.toList());
     }

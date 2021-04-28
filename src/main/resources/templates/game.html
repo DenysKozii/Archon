@@ -5,12 +5,12 @@
 <body class="bg-light">
 <div class="container">
     <div>
-        <h1><small th:text="${question.getTitle()}"></small></h1>
+        <h1><small th:text="${game.getQuestion().getTitle()}"></small></h1>
         <p></p>
     </div>
     <div class="d-flex justify-content-between">
         <div class="col-10 alert alert-primary" role="alert">
-            <h4><small th:text="${question.getContext()}"></small></h4>
+            <h4><small th:text="${game.getQuestion().getContext()}"></small></h4>
         </div>
 <!--        <svg height="100" width="100">-->
 <!--            <circle cx="50" cy="50" r="40" stroke="blue" stroke-width="3" fill="white"/>-->
@@ -27,7 +27,7 @@
 
     <br/><br/>
 
-    <th:block th:each="answer : ${answers}">
+    <th:block th:each="answer : ${game.getAnswers()}">
         <form class="mb-2" th:action="@{/game/answer/{gameId}/{answerId}(gameId=${game.getId()}, answerId = ${answer.getId()})}" method="post">
             <button class="col-5 btn btn-outline-primary"
                     th:text="${answer.getContext()}"></button>
@@ -36,19 +36,22 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <span th:each="qv,iter : ${parameters}">
+                <span th:each="qv,iter : ${game.getParameters()}">
                     <th th:text="${qv.getTitle()}"></th>
                 </span>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <span th:each="qv,iter : ${parameters}">
+                <span th:each="qv,iter : ${game.getParameters()}">
                     <td th:text="${qv.getValue()}"></td>
                 </span>
             </tr>
         </tbody>
     </table>
+    <a th:href="@{/game/save/{gameId}(gameId = ${game.getId()})}" class="btn btn-primary">
+        <span>Save</span>
+    </a>
 </div>
 </body>
 <div th:replace="~{/components/common :: js-lb}"></div>

@@ -1,16 +1,12 @@
 package com.company.archon.dto;
 
-import com.company.archon.entity.Game;
-import com.company.archon.entity.Parameter;
-import com.company.archon.entity.Question;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
-
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -24,7 +20,6 @@ public class GameParameterDto extends BaseDto {
 
     private Integer value;
 
-    private ParameterDto parameter;
+    private Boolean visible = false;
 
-    private GameDto game;
 }

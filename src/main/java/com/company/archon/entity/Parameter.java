@@ -3,7 +3,6 @@ package com.company.archon.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data
@@ -21,14 +20,12 @@ public class Parameter extends BaseEntity {
 
     private Integer lowestValue;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parameter")
-    private List<GameParameter> gameParameters;
+    private Boolean visible = false;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_game_pattern")
     private GamePattern gamePattern;
+
 }

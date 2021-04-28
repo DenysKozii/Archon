@@ -1,87 +1,147 @@
 package com.company.archon.services.impl;
 
-import com.company.archon.dto.ParameterDto;
 import com.company.archon.dto.QuestionDto;
-import com.company.archon.dto.QuestionParameterDto;
 import com.company.archon.entity.*;
 import com.company.archon.exception.EntityNotFoundException;
 import com.company.archon.mapper.QuestionMapper;
+import com.company.archon.pagination.PageDto;
+import com.company.archon.pagination.PagesUtility;
 import com.company.archon.repositories.*;
 import com.company.archon.services.QuestionService;
-import liquibase.pro.packaged.A;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @Transactional
+@RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final ParameterRepository parameterRepository;
     private final GamePatternRepository gamePatternRepository;
     private final AnswerRepository answerRepository;
+    private final AnswerParameterRepository answerParameterRepository;
     private final QuestionParameterRepository questionParameterRepository;
-    private final ParameterRepository parameterRepository;
 
-    public QuestionServiceImpl(QuestionRepository questionRepository, GamePatternRepository gamePatternRepository, AnswerRepository answerRepository, QuestionParameterRepository questionParameterRepository, ParameterRepository parameterRepository) {
-        this.questionRepository = questionRepository;
-        this.gamePatternRepository = gamePatternRepository;
-        this.answerRepository = answerRepository;
-        this.questionParameterRepository = questionParameterRepository;
-        this.parameterRepository = parameterRepository;
+    @Override
+    public PageDto<QuestionDto> getQuestionsByGamePatternId(Long gamePatternId, int page, int pageSize) {
+        Page<Question> result = questionRepository.findAllByGamePatternId(gamePatternId, PagesUtility.createPageableUnsorted(page, pageSize));
+        return PageDto.of(result.getTotalElements(), page, mapToDto(result.getContent()));
     }
 
     @Override
-    public List<QuestionDto> getQuestionsByGamePatternId(Long gamePatternId, Long questionId) {
-        List<Question> questions = questionRepository.findAllByGamePatternId(gamePatternId);
-        return questions.stream()
+    public PageDto<QuestionDto> getRelativeQuestionsByGamePatternId(Long gamePatternId, Long questionId, int page, int pageSize) {
+        Page<Question> result = questionRepository.findAllByGamePatternId(gamePatternId, PagesUtility.createPageableUnsorted(page, pageSize));
+        List<Question> questions = result.getContent().stream()
                 .filter(o-> !o.getId().equals(questionId))
-                .map(QuestionMapper.INSTANCE::mapToDto)
                 .collect(Collectors.toList());
+        return PageDto.of(result.getTotalElements(), page, mapToDto(questions));
     }
 
     @Override
-    public List<QuestionDto> getQuestionsByGamePatternId(Long gamePatternId) {
-        List<Question> questions = questionRepository.findAllByGamePatternId(gamePatternId);
+    public PageDto<QuestionDto> addRelativeQuestion(Long questionId, Long relativeId, int page, int pageSize) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
+        Question relativeQuestion = questionRepository.findById(relativeId)
+                .orElseThrow(() -> new EntityNotFoundException("Question with id " + relativeId + " not found"));
+
+        question.getQuestionConditions().add(relativeQuestion);
+        questionRepository.save(question);
+
+        Set<Question> relativeQuestions = new HashSet<>(question.getQuestionConditions());
+        relativeQuestions.add(question);
+
+        Page<Question> questions = questionRepository.findAllByGamePatternId(question.getGamePattern().getId(), PagesUtility.createPageableUnsorted(page, pageSize));
+        List<Question> result = questions.getContent().stream()
+                .filter(o -> !relativeQuestions.contains(o))
+                .collect(Collectors.toList());
+
+        return PageDto.of(result.size(), page, mapToDto(result));
+    }
+
+    private List<QuestionDto> mapToDto(List<Question> questions) {
         return questions.stream()
                 .map(QuestionMapper.INSTANCE::mapToDto)
                 .collect(Collectors.toList());
     }
 
-
-
+    private Question createNewQuestionParameters(GamePattern gamePattern) {
+        Question question = new Question();
+        question.setGamePattern(gamePattern);
+        for (Parameter parameter : gamePattern.getParameters()) {
+            QuestionParameter questionParameter = new QuestionParameter();
+            questionParameter.setTitle(parameter.getTitle());
+            questionParameter.setValueAppear(parameter.getLowestValue());
+            questionParameter.setValueDisappear(parameter.getHighestValue());
+            questionParameter.setQuestion(question);
+            questionParameterRepository.save(questionParameter);
+            question.getQuestionParameters().add(questionParameter);
+        }
+        return question;
+    }
 
     @Override
     public QuestionDto createNewQuestion(Long gamePatternId) {
         GamePattern gamePattern = gamePatternRepository.findById(gamePatternId)
                 .orElseThrow(() -> new EntityNotFoundException("GamePattern with id " + gamePatternId + " not found"));
-        Question question = new Question();
-        question.setGamePattern(gamePattern);
-        List<Parameter> parameters = parameterRepository.findAllByGamePattern(gamePattern);
-        for (Parameter parameter: parameters) {
-            QuestionParameter questionParameter = new QuestionParameter();
-            questionParameter.setTitle(parameter.getTitle());
-            questionParameter.setValueAppear(parameter.getLowestValue());
-            questionParameter.setValueDisappear(parameter.getHighestValue());
-
-            questionParameter.setQuestion(question);
-            questionParameterRepository.save(questionParameter);
-        }
+        Question question = createNewQuestionParameters(gamePattern);
         questionRepository.save(question);
         return QuestionMapper.INSTANCE.mapToDto(question);
     }
 
+    @Override
+    public PageDto<QuestionDto> getRelativeQuestions(Long questionId, int page, int pageSize) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
+        PageDto<QuestionDto> pageDto = getQuestionsByGamePatternId(question.getGamePattern().getId(), page, pageSize);
+        pageDto.getObjects().remove(question.getId().intValue());
+        return pageDto;
+    }
+
+//    @Override
+//    public QuestionDto createNewQuestion(Long gamePatternId) {
+//        GamePattern gamePattern = gamePatternRepository.findById(gamePatternId)
+//                .orElseThrow(() -> new EntityNotFoundException("GamePattern with id " + gamePatternId + " not found"));
+//        Question question = new Question();
+//        question.setGamePattern(gamePattern);
+//        List<Parameter> parameters = parameterRepository.findAllByGamePattern(gamePattern);
+//        for (Parameter parameter: parameters) {
+//            QuestionParameter questionParameter = new QuestionParameter();
+//            questionParameter.setTitle(parameter.getTitle());
+//            questionParameter.setValueAppear(parameter.getLowestValue());
+//            questionParameter.setValueDisappear(parameter.getHighestValue());
+//
+//            questionParameter.setQuestion(question);
+//            questionParameterRepository.save(questionParameter);
+//        }
+//        questionRepository.save(question);
+//        return QuestionMapper.INSTANCE.mapToDto(question);
+//    }
+
+    @Override
+    public boolean deleteById(Long questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
+        List<Answer> answers = answerRepository.findAllByQuestionId(questionId);
+        answers.stream().peek(
+                answer -> answer.getParameters().forEach(answerParameterRepository::delete)
+        ).forEach(answerRepository::delete);
+        question.getQuestionParameters().forEach(questionParameterRepository::delete);
+        question.setGamePattern(null);
+        questionRepository.delete(question);
+        return true;
+    }
 
     @Override
     public boolean updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, MultipartFile multipartFile) throws IOException {
@@ -98,36 +158,6 @@ public class QuestionServiceImpl implements QuestionService {
 //            multipartFile.transferTo(new File(String.format("%s/%s",uploadDir, fileName)));
 //        }
         questionRepository.save(question);
-        return true;
-    }
-
-    @Override
-    public List<QuestionDto> addRelativeQuestion(Long questionId, Long relativeId, Long gamePatternId) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
-        Question relativeQuestion = questionRepository.findById(relativeId)
-                .orElseThrow(() -> new EntityNotFoundException("Question with id " + relativeId + " not found"));
-        GamePattern gamePattern = gamePatternRepository.findById(gamePatternId)
-                .orElseThrow(() -> new EntityNotFoundException("GamePattern with id " + gamePatternId + " not found"));
-
-        question.getQuestionConditions().add(relativeQuestion);
-        questionRepository.save(question);
-
-        Set<Question> relativeQuestions = new HashSet<>(question.getQuestionConditions());
-        relativeQuestions.add(question);
-        return gamePattern.getQuestions().stream()
-                .filter(o->!relativeQuestions.contains(o))
-                .map(QuestionMapper.INSTANCE::mapToDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean deleteQuestion(Long questionId) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
-        List<Answer> answers = answerRepository.findAllByQuestionId(questionId);
-        answers.forEach(answerRepository::delete);
-        questionRepository.delete(question);
         return true;
     }
 

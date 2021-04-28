@@ -4,11 +4,16 @@ package com.company.archon.services.impl;
 import com.company.archon.entity.FriendRequest;
 import com.company.archon.entity.User;
 import com.company.archon.exception.EntityNotFoundException;
+import com.company.archon.pagination.PageDto;
+import com.company.archon.pagination.PagesUtility;
 import com.company.archon.repositories.FriendRequestRepository;
 import com.company.archon.repositories.UserRepository;
+import com.company.archon.services.AuthorizationService;
 import com.company.archon.services.FriendRequestService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,25 +22,23 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class FriendRequestServiceImpl implements FriendRequestService {
 
     private final FriendRequestRepository friendRequestRepository;
     private final UserRepository userRepository;
+    private final AuthorizationService authorizationService;
 
-    @Autowired
-    public FriendRequestServiceImpl(FriendRequestRepository friendRequestRepository, UserRepository userRepository) {
-        this.friendRequestRepository = friendRequestRepository;
-        this.userRepository = userRepository;
-    }
 
     @Override
-    public boolean inviteByEmail(String userEmail, String friendEmail) {
-        Optional<FriendRequest> friendRequestOptional = friendRequestRepository.findByInvitorEmailAndAcceptorEmail(userEmail, friendEmail);
+    public boolean inviteByUsername(String friendUsername) {
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        Optional<FriendRequest> friendRequestOptional = friendRequestRepository.findByInvitorUsernameAndAcceptorUsername(username, friendUsername);
 
-        if (friendRequestOptional.isEmpty()) {
+        if (!friendRequestOptional.isPresent()) {
             FriendRequest friendRequest = new FriendRequest();
-            friendRequest.setInvitorEmail(userEmail);
-            friendRequest.setAcceptorEmail(friendEmail);
+            friendRequest.setInvitorUsername(username);
+            friendRequest.setAcceptorUsername(friendUsername);
             friendRequest.setStatus(true);
             friendRequestRepository.save(friendRequest);
             return true;
@@ -44,16 +47,19 @@ public class FriendRequestServiceImpl implements FriendRequestService {
     }
 
     @Override
-    public boolean acceptByEmail(String userEmail, String friendEmail) {
-        FriendRequest friendRequest = friendRequestRepository.findByInvitorEmailAndAcceptorEmail(userEmail, friendEmail)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Friend request by user email %s and friend email %s doesn't exists!", userEmail, friendEmail)));
+    public boolean acceptByUsername(String friendUsername) {
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        FriendRequest friendRequest = friendRequestRepository.findByInvitorUsernameAndAcceptorUsername(username, friendUsername)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Friend request by user username %s and friend username %s doesn't exists!", username, friendUsername)));
         if (!friendRequest.getStatus())
             return false;
         friendRequest.setStatus(false);
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new EntityNotFoundException("User with email " + userEmail + " doesn't exists!"));
-        User friend = userRepository.findByEmail(friendEmail)
-                .orElseThrow(() -> new EntityNotFoundException("User with email " + friendEmail + " doesn't exists!"));
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException(String.format("User with username %s not found!", username))
+        );
+        User friend = userRepository.findByUsername(friendUsername).orElseThrow(() ->
+                new UsernameNotFoundException(String.format("User with username %s not found!", friendUsername))
+        );
         user.getFriends().add(friend);
         friend.getFriends().add(user);
         userRepository.save(user);
@@ -64,15 +70,16 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
 
     @Override
-    public boolean deleteByEmail(String userEmail, String friendEmail) {
-        FriendRequest friendRequest = friendRequestRepository.findByInvitorEmailAndAcceptorEmail(userEmail, friendEmail)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Friend request by user email %s and friend email %s doesn't exists!", userEmail, friendEmail)));
+    public boolean deleteByUsername(String friendUsername) {
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        FriendRequest friendRequest = friendRequestRepository.findByInvitorUsernameAndAcceptorUsername(username, friendUsername)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Friend request by user username %s and friend username %s doesn't exists!", username, friendUsername)));
         friendRequestRepository.delete(friendRequest);
 
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new EntityNotFoundException("User with email " + userEmail + " doesn't exists!"));
-        User friend = userRepository.findByEmail(friendEmail)
-                .orElseThrow(() -> new EntityNotFoundException("User with email " + friendEmail + " doesn't exists!"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+        User friend = userRepository.findByUsername(friendUsername)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + friendUsername + " doesn't exists!"));
 
         user.getFriends().remove(friend);
         friend.getFriends().remove(user);
@@ -82,20 +89,26 @@ public class FriendRequestServiceImpl implements FriendRequestService {
     }
 
     @Override
-    public List<String> acceptList(String email) {
-        return friendRequestRepository.findAllByAcceptorEmail(email).stream()
+    public PageDto<String> acceptList(int page, int pageSize) {
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        Page<FriendRequest> result = friendRequestRepository.findAllByAcceptorUsername(username, PagesUtility.createPageableUnsorted(page, pageSize));
+        List<String> content = result.getContent().stream()
                 .filter(FriendRequest::getStatus)
-                .map(FriendRequest::getInvitorEmail)
+                .map(FriendRequest::getInvitorUsername)
                 .collect(Collectors.toList());
+        return PageDto.of(result.getTotalElements(), page, content);
 
     }
 
     @Override
-    public List<String> inviteList(String email) {
-        return friendRequestRepository.findAllByInvitorEmail(email).stream()
+    public PageDto<String> inviteList(int page, int pageSize) {
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        Page<FriendRequest> result = friendRequestRepository.findAllByAcceptorUsername(username, PagesUtility.createPageableUnsorted(page, pageSize));
+        List<String> content = result.getContent().stream()
                 .filter(FriendRequest::getStatus)
-                .map(FriendRequest::getAcceptorEmail)
+                .map(FriendRequest::getAcceptorUsername)
                 .collect(Collectors.toList());
+        return PageDto.of(result.getTotalElements(), page, content);
     }
 
 }
