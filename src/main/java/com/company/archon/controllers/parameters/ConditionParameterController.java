@@ -20,7 +20,7 @@ public class ConditionParameterController {
     @PostMapping("/update/{gamePatternId}/{parameterId}")
     public String newParameter(@PathVariable Long gamePatternId,
                                @PathVariable Long parameterId,
-                               @RequestParam Integer value,
+                               @RequestParam(defaultValue = "0") Integer value,
                                Model model) {
         conditionParameterService.update(value, parameterId);
         model.addAttribute("gamePatternId", gamePatternId);
