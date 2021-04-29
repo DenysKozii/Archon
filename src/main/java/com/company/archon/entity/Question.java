@@ -50,6 +50,11 @@ public class Question extends BaseEntity{
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "question")
     private List<QuestionParameter> questionParameters = new ArrayList<>();
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question")
+    private List<QuestionUserParameter> questionUserParameters = new ArrayList<>();
+
     private Integer weight;
 
 }

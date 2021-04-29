@@ -31,12 +31,23 @@
                                name="influence" th:placeholder="${qv.getValue()}" required=""/>
                     </div>
                 </td>
-<!--                <td>-->
-<!--                    <div class="form-group">-->
-<!--                        <input type="number" class="form-control"-->
-<!--                               name="influence_second" th:placeholder="${qv.getValue()}" required=""/>-->
-<!--                    </div>-->
-<!--                </td>-->
+                <td>
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </td>
+            </form>
+        </tr>
+        <tr th:each="qv,iter : ${userParameters}">
+            <form method="post"
+                  th:action="@{/answerParameter/update/user/{gamePatternId}/{questionId}/{answerId}/{parameterId}(gamePatternId = ${gamePatternId}, questionId = ${questionId},answerId=${answerId}, parameterId = ${qv.getId()})}">
+                <td th:text="${qv.getTitle()}"></td>
+                <td>
+                    <div class="form-group">
+                        <input type="number" class="form-control"
+                               name="influence" th:placeholder="${qv.getValue()}" required=""/>
+                    </div>
+                </td>
                 <td>
                     <div class="col-sm-8">
                         <button type="submit" class="btn btn-primary">Submit</button>

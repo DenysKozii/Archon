@@ -1,8 +1,7 @@
 package com.company.archon.controllers.game;
 
-import com.company.archon.dto.AnswerDto;
-import com.company.archon.dto.AnswerParameterDto;
-import com.company.archon.dto.ParameterDto;
+import com.company.archon.dto.*;
+import com.company.archon.entity.Parameter;
 import com.company.archon.entity.User;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.services.AnswerParameterService;
@@ -23,7 +22,6 @@ import java.util.List;
 public class AnswerController {
     private final AnswerService answerService;
     private final ParameterService parameterService;
-    private final AnswerParameterService answerParameterService;
 
     @GetMapping("/new/{gamePatternId}/{questionId}")
     public String answersList(@PathVariable Long gamePatternId,
@@ -36,9 +34,9 @@ public class AnswerController {
                             @PathVariable Long questionId,
                             @RequestParam String context, Model model) {
         AnswerDto answerDto = answerService.createNewAnswer(questionId, context);
-        PageDto<AnswerParameterDto> parameters = answerParameterService.getParametersByAnswerId(answerDto.getId(),0,150);
         model.addAttribute("gamePatternId", gamePatternId);
-        model.addAttribute("parameters", parameters.getObjects());
+        model.addAttribute("parameters", answerDto.getParameters());
+        model.addAttribute("userParameters", answerDto.getUserParameters());
         model.addAttribute("answerId", answerDto.getId());
         return "parameter/answerParametersList";
     }

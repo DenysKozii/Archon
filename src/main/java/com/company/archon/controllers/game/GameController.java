@@ -34,6 +34,10 @@ public class GameController {
             gameService.deleteById(gameId);
             return "gameOver";
         }
+        if (GameStatus.COMPLETED.equals(game.getGameStatus())){
+            gameService.deleteById(gameId);
+            return "gameCompleted";
+        }
         return "game";
     }
 

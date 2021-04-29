@@ -9,9 +9,11 @@ import com.company.archon.pagination.PageDto;
 import com.company.archon.pagination.PagesUtility;
 import com.company.archon.repositories.*;
 import com.company.archon.services.AnswerService;
+import com.company.archon.services.AuthorizationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +26,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AnswerServiceImpl implements AnswerService {
     private final AnswerRepository answerRepository;
-    private final GameRepository gameRepository;
     private final QuestionRepository questionRepository;
-    private final GameParameterRepository gameParameterRepository;
     private final QuestionParameterRepository questionParameterRepository;
     private final AnswerParameterRepository answerParameterRepository;
+    private final UserRepository userRepository;
+    private final UserParameterRepository userParameterRepository;
+    private final AnswerUserParameterRepository answerUserParameterRepository;
+    private final AuthorizationService authorizationService;
 
     @Override
     public List<AnswerDto> getAnswersByQuestionId(Long questionId) {
@@ -66,6 +70,20 @@ public class AnswerServiceImpl implements AnswerService {
             answerParameterRepository.save(answerParameter);
             answer.getParameters().add(answerParameter);
         }
+        answerRepository.save(answer);
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+        List<UserParameter> userParameters = userParameterRepository.findAllByUser(user);
+        for (UserParameter parameter: userParameters) {
+            AnswerUserParameter answerUserParameter = new AnswerUserParameter();
+            answerUserParameter.setTitle(parameter.getTitle());
+            answerUserParameter.setValue(0);
+            answerUserParameter.setAnswer(answer);
+            answerUserParameterRepository.save(answerUserParameter);
+            answer.getUserParameters().add(answerUserParameter);
+        }
+
         answerRepository.save(answer);
         return AnswerMapper.INSTANCE.mapToDto(answer);
     }

@@ -1,18 +1,21 @@
 package com.company.archon.services.impl;
 
 import com.company.archon.dto.AnswerParameterDto;
-import com.company.archon.entity.Answer;
-import com.company.archon.entity.AnswerParameter;
+import com.company.archon.dto.AnswerUserParameterDto;
+import com.company.archon.entity.*;
 import com.company.archon.exception.EntityNotFoundException;
 import com.company.archon.mapper.AnswerParameterMapper;
+import com.company.archon.mapper.AnswerUserParameterMapper;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.pagination.PagesUtility;
-import com.company.archon.repositories.AnswerParameterRepository;
-import com.company.archon.repositories.AnswerRepository;
+import com.company.archon.repositories.*;
 import com.company.archon.services.AnswerParameterService;
+import com.company.archon.services.AnswerService;
+import com.company.archon.services.AuthorizationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,10 @@ public class AnswerParameterServiceImpl implements AnswerParameterService {
 
     private final AnswerParameterRepository answerParameterRepository;
     private final AnswerRepository answerRepository;
+    private final AnswerUserParameterRepository answerUserParameterRepository;
+    private final UserParameterRepository userParameterRepository;
+    private final UserRepository userRepository;
+    private final AuthorizationService authorizationService;
 
     @Override
     public boolean update(Long parameterId, Integer value) {
@@ -38,12 +45,29 @@ public class AnswerParameterServiceImpl implements AnswerParameterService {
     }
 
     @Override
+    public void updateUserParameter(Long parameterId, Integer influence) {
+        AnswerUserParameter answerUserParameter = answerUserParameterRepository.findById(parameterId)
+                .orElseThrow(()->new EntityNotFoundException("AnswerUserParameter with id " + parameterId + " not found"));
+        answerUserParameter.setValue(influence);
+        answerUserParameterRepository.save(answerUserParameter);
+    }
+
+    @Override
     public PageDto<AnswerParameterDto> getParametersByAnswerId(Long answerId, int page, int pageSize) {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(()->new EntityNotFoundException("Answer with id " + answerId + " not found"));
 
         Page<AnswerParameter> result = answerParameterRepository.findAllByAnswer(answer, PagesUtility.createPageableUnsorted(page, pageSize));
         return PageDto.of(result.getTotalElements(), page, mapToDto(result.getContent()));
+    }
+
+    @Override
+    public List<AnswerUserParameterDto> getUserParametersByAnswerId(Long answerId) {
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(()->new EntityNotFoundException("Answer with id " + answerId + " not found"));
+        return answerUserParameterRepository.findAllByAnswer(answer).stream()
+                .map(AnswerUserParameterMapper.INSTANCE::mapToDto)
+                .collect(Collectors.toList());
     }
 
     private List<AnswerParameterDto> mapToDto(List<AnswerParameter> answers) {

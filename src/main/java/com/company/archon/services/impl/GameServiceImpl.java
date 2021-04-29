@@ -38,6 +38,7 @@ public class GameServiceImpl implements GameService {
     private final AnswerService answerService;
     private final AnswerRepository answerRepository;
     private final AnswerParameterRepository answerParameterRepository;
+    private final AnswerUserParameterRepository answerUserParameterRepository;
     private final AuthorizationService authorizationService;
 
 
@@ -195,6 +196,17 @@ public class GameServiceImpl implements GameService {
                                 .findByTitleAndAnswer(o.getParameter().getTitle(), answer)
                                 .orElseThrow(() -> new EntityNotFoundException("AnswerParameter with title " + o.getParameter().getTitle() + " not found"))
                                 .getValue())));
+
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+        user.getUserParameters()
+                .forEach(o->o.setValue(Integer.min(1,
+                o.getValue()+answerUserParameterRepository
+                        .findByTitleAndAnswer(o.getTitle(), answer)
+                        .orElseThrow(() -> new EntityNotFoundException("AnswerUserParameter with title " + o.getTitle() + " not found"))
+                        .getValue())));
+
         gameRepository.save(game);
         game.setQuestionsPull(changeQuestions(game));
         gameRepository.save(game);
@@ -220,11 +232,29 @@ public class GameServiceImpl implements GameService {
 
     private GameDto gameOverConditionCheck(Game game){
         if(gameParameterRepository.findAllByGame(game).stream()
-                .anyMatch(o -> o.getValue() < o.getParameter().getLowestValue())){
+                .anyMatch(o -> o.getValue() < o.getParameter().getLowestValue()))
             game.setGameStatus(GameStatus.GAME_OVER);
-            return mapToDto(game);
-        }
+        if(gameCompletedConditionCheck(game))
+            game.setGameStatus(GameStatus.COMPLETED);
         return mapToDto(game);
+    }
+
+
+    private boolean gameCompletedConditionCheck(Game game){
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+
+        GamePattern gamePattern = game.getGamePattern();
+        for (ConditionParameter conditionParameter: gamePattern.getConditionParameters()) {
+            for (UserParameter userParameter:user.getUserParameters()) {
+                if (conditionParameter.getTitle().equals(userParameter.getTitle())
+                        && conditionParameter.getValueFinish() > 0
+                        && !(conditionParameter.getValueFinish().equals(userParameter.getValue())))
+                    return false;
+            }
+        }
+        return true;
     }
 
 }

@@ -22,4 +22,6 @@ public class AnswerDto extends BaseDto{
 
     private List<AnswerParameterDto> parameters;
 
+    private List<AnswerUserParameterDto> userParameters;
+
 }
