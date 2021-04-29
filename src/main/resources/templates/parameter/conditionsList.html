@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Results')}"></div>
+<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<body>
+<div class="container">
+    <div class="d-flex flex-row my-3 mx-3">
+        <form method="post" th:action="@{/parameter/new/{gamePatternId}(gamePatternId = ${gamePatternId})}">
+            <div class="col-sm-8">
+                <input type="text" name="title" placeholder="Title">
+            </div>
+            <p></p>
+            <div class="col-sm-8">
+                <input type="number" name="defaultValue" placeholder="Default value">
+            </div>
+            <p></p>
+            <div class="col-sm-8">
+                <input type="number" name="lowestValue" placeholder="Lowest value">
+            </div>
+            <p></p>
+            <div class="col-sm-8">
+                <input type="number" name="highestValue" placeholder="Highest value">
+            </div>
+            <div class="col-sm-8">
+                Visible
+                <input type="checkbox" name="visible" checked="checked" />
+            </div>
+            <p></p>
+            <div class="col-sm-8">
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+            <p></p>
+            <a th:href="@{/question/list/{id}(id = ${gamePatternId})}" class="btn btn-primary">
+                <span>Next</span>
+            </a>
+        </form>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Default</th>
+            <th scope="col">Lowest</th>
+            <th scope="col">Highest</th>
+            <th scope="col">Visible</th>
+            <th scope="col">Update</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="qv,iter : ${parameters}">
+            <td th:text="${iter.index} + 1"></td>
+            <td th:text="${qv.getTitle()}"></td>
+            <td th:text="${qv.getDefaultValue()}"></td>
+            <td th:text="${qv.getLowestValue()}"></td>
+            <td th:text="${qv.getHighestValue()}"></td>
+            <td th:text="${qv.getVisible()}"></td>
+            <td>
+                <a th:href="@{/parameter/update/{id}(id = ${qv.getId()})}" class="btn btn-primary">
+                    <span>Update</span>
+                </a>
+            </td>
+            <td>
+                <form th:action="@{/parameter/delete/{gamePatternId}/{parameterId}(gamePatternId = ${gamePatternId}, parameterId = ${qv.getId()})}" method="post">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
