@@ -4,7 +4,8 @@
 <div th:replace="~{/components/common :: navbar(game=false)}"></div>
 <body>
 <div class="container">
-    <p></p>
+    <h3>Answer parameters</h3>
+    <br>
     <a th:href="@{/answer/new/{gamePatternId}/{questionId}
                     (questionId = ${questionId}, gamePatternId = ${gamePatternId})}"
        class="btn btn-primary">

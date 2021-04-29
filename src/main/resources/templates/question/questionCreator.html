@@ -3,6 +3,8 @@
 <div th:replace="~{/components/common :: header(value='Register')}"></div>
 <body class="bg-light">
 <div class="container">
+    <h3>Question editor</h3>
+    <br>
     <div class="py-5 text-center">
         <div class="col-5 mx-auto">
             <form th:action="@{/question/new/{gamePatternId}/{questionId}(gamePatternId = ${gamePatternId}, questionId = ${id})}" class="needs-validation" method="post">

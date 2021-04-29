@@ -4,6 +4,8 @@
 <div th:replace="~{/components/common :: navbar(game=false)}"></div>
 <body>
 <div class="container">
+    <h3>Relative questions list</h3>
+    <br>
     <div class="d-flex flex-row my-3 mx-3">
         <div class="btn-group btn-group-toggle" data-toggle="buttons">
             <a th:href="@{/question/list/{id}(id = ${gamePatternId})}" class="btn btn-primary" >

@@ -4,6 +4,8 @@
 <div th:replace="~{/components/common :: navbar(game=false)}"></div>
 <body>
 <div class="container">
+    <h3>Plot parameters</h3>
+    <br>
     <div class="d-flex flex-row my-3 mx-3">
         <form method="post" th:action="@{/parameter/new/{gamePatternId}(gamePatternId = ${gamePatternId})}">
             <div class="col-sm-8">
