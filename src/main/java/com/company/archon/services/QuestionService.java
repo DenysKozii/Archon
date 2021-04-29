@@ -20,7 +20,7 @@ public interface QuestionService {
 
     QuestionDto createNewQuestion(Long gamePatternId);
 
-    boolean updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, MultipartFile multipartFile) throws IOException;
+    QuestionDto updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, MultipartFile multipartFile) throws IOException;
 
 
     PageDto<QuestionDto> getRelativeQuestionsByGamePatternId(Long gamePatternId, Long questionId, int page, int pageSize);

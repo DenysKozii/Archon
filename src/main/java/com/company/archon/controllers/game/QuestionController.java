@@ -2,6 +2,7 @@ package com.company.archon.controllers.game;
 
 import com.company.archon.dto.QuestionDto;
 import com.company.archon.dto.QuestionParameterDto;
+import com.company.archon.dto.QuestionUserParameterDto;
 import com.company.archon.entity.User;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.services.ParameterService;
@@ -48,16 +49,18 @@ public class QuestionController {
                               @RequestParam String context,
                               @RequestParam Integer weight,
 //                              @RequestParam("fileImage") MultipartFile multipartFile,
-                              @AuthenticationPrincipal User user, Model model) throws IOException {
-        questionService.updateQuestion(gamePatternId, questionId,
+                              Model model) throws IOException {
+        QuestionDto questionDto = questionService.updateQuestion(gamePatternId, questionId,
                 title,
                 context,
                 weight,
                 null);
-        PageDto<QuestionParameterDto> questionParameters = questionParameterService.getParametersByQuestionId(questionId,0,150);
+//        PageDto<QuestionParameterDto> questionParameters = questionParameterService.getParametersByQuestionId(questionId,0,150);
+//        List<QuestionUserParameterDto> userParameters = questionParameterService.getUserParametersByQuestionId(questionId);
         model.addAttribute("questionId", questionId);
         model.addAttribute("gamePatternId", gamePatternId);
-        model.addAttribute("parameters", questionParameters.getObjects());
+        model.addAttribute("userParameters", questionDto.getQuestionUserParameters());
+        model.addAttribute("parameters", questionDto.getQuestionParameters());
         return "parameter/questionParametersList";
     }
 

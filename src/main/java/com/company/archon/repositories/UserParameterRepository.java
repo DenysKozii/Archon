@@ -12,4 +12,5 @@ public interface UserParameterRepository extends JpaRepository<UserParameter, Lo
     List<UserParameter> findAllByUser(User user);
 
     Optional<UserParameter> findByTitleAndUser(String title, User user);
+
 }

@@ -35,24 +35,24 @@ public class Question extends BaseEntity{
     @Transient
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     @JoinColumn(name="game_pattern")
     private GamePattern gamePattern;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<QuestionParameter> questionParameters = new ArrayList<>();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<QuestionUserParameter> questionUserParameters = new ArrayList<>();
 
     private Integer weight;

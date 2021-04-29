@@ -45,6 +45,29 @@
                 </td>
             </form>
         </tr>
+        <tr th:each="qv,iter : ${userParameters}">
+            <form method="post"
+                  th:action="@{/questionParameter/update/user/{gamePatternId}/{questionId}/{parameterId}(gamePatternId = ${gamePatternId},questionId = ${questionId}, parameterId = ${qv.getId()})}">
+                <td th:text="${qv.getTitle()}"></td>
+                <td>
+                    <div class="form-group">
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueAppear()}"
+                               name="appear"/>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueDisappear()}"
+                               name="disappear"/>
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </td>
+            </form>
+        </tr>
         </tbody>
     </table>
 </div>

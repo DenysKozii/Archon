@@ -7,10 +7,12 @@ import com.company.archon.mapper.QuestionMapper;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.pagination.PagesUtility;
 import com.company.archon.repositories.*;
+import com.company.archon.services.AuthorizationService;
 import com.company.archon.services.QuestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,11 +30,13 @@ import java.util.stream.Collectors;
 public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
-    private final ParameterRepository parameterRepository;
+    private final QuestionUserParameterRepository questionUserParameterRepository;
     private final GamePatternRepository gamePatternRepository;
     private final AnswerRepository answerRepository;
     private final AnswerParameterRepository answerParameterRepository;
     private final QuestionParameterRepository questionParameterRepository;
+    private final AuthorizationService authorizationService;
+    private final UserRepository userRepository;
 
     @Override
     public PageDto<QuestionDto> getQuestionsByGamePatternId(Long gamePatternId, int page, int pageSize) {
@@ -76,6 +80,17 @@ public class QuestionServiceImpl implements QuestionService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public QuestionDto createNewQuestion(Long gamePatternId) {
+        GamePattern gamePattern = gamePatternRepository.findById(gamePatternId)
+                .orElseThrow(() -> new EntityNotFoundException("GamePattern with id " + gamePatternId + " not found"));
+        Question question = createNewQuestionParameters(gamePattern);
+        questionRepository.save(question);
+        createNewQuestionUserParameters(question);
+        questionRepository.save(question);
+        return QuestionMapper.INSTANCE.mapToDto(question);
+    }
+
     private Question createNewQuestionParameters(GamePattern gamePattern) {
         Question question = new Question();
         question.setGamePattern(gamePattern);
@@ -91,13 +106,19 @@ public class QuestionServiceImpl implements QuestionService {
         return question;
     }
 
-    @Override
-    public QuestionDto createNewQuestion(Long gamePatternId) {
-        GamePattern gamePattern = gamePatternRepository.findById(gamePatternId)
-                .orElseThrow(() -> new EntityNotFoundException("GamePattern with id " + gamePatternId + " not found"));
-        Question question = createNewQuestionParameters(gamePattern);
-        questionRepository.save(question);
-        return QuestionMapper.INSTANCE.mapToDto(question);
+    private void createNewQuestionUserParameters(Question question) {
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+        for (UserParameter parameter : user.getUserParameters()) {
+            QuestionUserParameter questionParameter = new QuestionUserParameter();
+            questionParameter.setTitle(parameter.getTitle());
+            questionParameter.setValueAppear(0);
+            questionParameter.setValueDisappear(parameter.getValue());
+            questionParameter.setQuestion(question);
+            questionUserParameterRepository.save(questionParameter);
+            question.getQuestionUserParameters().add(questionParameter);
+        }
     }
 
     @Override
@@ -144,7 +165,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public boolean updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, MultipartFile multipartFile) throws IOException {
+    public QuestionDto updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, MultipartFile multipartFile) throws IOException {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
         question.setTitle(title);
@@ -158,7 +179,7 @@ public class QuestionServiceImpl implements QuestionService {
 //            multipartFile.transferTo(new File(String.format("%s/%s",uploadDir, fileName)));
 //        }
         questionRepository.save(question);
-        return true;
+        return QuestionMapper.INSTANCE.mapToDto(question);
     }
 
 

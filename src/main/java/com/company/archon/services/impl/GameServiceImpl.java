@@ -39,6 +39,8 @@ public class GameServiceImpl implements GameService {
     private final AnswerRepository answerRepository;
     private final AnswerParameterRepository answerParameterRepository;
     private final AnswerUserParameterRepository answerUserParameterRepository;
+    private final QuestionUserParameterRepository questionUserParameterRepository;
+    private final UserParameterRepository userParameterRepository;
     private final AuthorizationService authorizationService;
 
 
@@ -98,6 +100,10 @@ public class GameServiceImpl implements GameService {
     }
 
     private List<Question> changeQuestions(Game game) {
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+
         List<Question> questions = questionRepository.findAllByGamePatternId(game.getGamePattern().getId());
         return questions.stream()
                 .filter(question -> questionParameterRepository
@@ -109,6 +115,15 @@ public class GameServiceImpl implements GameService {
                                         || parameter.getValueDisappear() < gameParameterRepository
                                         .findAllByTitleAndGame(parameter.getTitle(), game)
                                         .orElseThrow(() -> new EntityNotFoundException("GameParameter with title " + parameter.getTitle() + " not found")).getValue()))
+                .filter(question -> questionUserParameterRepository
+                        .findAllByQuestion(question).stream()
+                        .noneMatch(parameter ->
+                                parameter.getValueAppear() > userParameterRepository
+                                        .findByTitleAndUser(parameter.getTitle(), user)
+                                        .orElseThrow(() -> new EntityNotFoundException("UserParameter with title " + parameter.getTitle() + " not found")).getValue()
+                                        || parameter.getValueDisappear() < userParameterRepository
+                                        .findByTitleAndUser(parameter.getTitle(), user)
+                                        .orElseThrow(() -> new EntityNotFoundException("UserParameter with title " + parameter.getTitle() + " not found")).getValue()))
                 .filter(o -> checkQuestions(game, o))
                 .collect(Collectors.toList());
     }
