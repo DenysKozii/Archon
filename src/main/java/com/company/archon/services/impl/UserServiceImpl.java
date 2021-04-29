@@ -48,8 +48,7 @@ public class UserServiceImpl implements UserService {
     private UserProfileDto map(User user) {
         return new UserProfileDto(
                 user.getId(),
-                user.getUsername(),
-                user.getGamePatterns().size()
+                user.getUsername()
         );
     }
 

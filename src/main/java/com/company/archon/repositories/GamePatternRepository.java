@@ -13,9 +13,9 @@ import java.util.Optional;
 
 public interface GamePatternRepository extends JpaRepository<GamePattern, Long>, PagingAndSortingRepository<GamePattern, Long> {
 
-    List<GamePattern> findByUsers(User user);
-
     Page<GamePattern> findAll(Pageable pageable);
+
+    List<GamePattern> findAll();
 
     Optional<GamePattern> findById(Long id);
 

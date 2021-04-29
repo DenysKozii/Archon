@@ -23,12 +23,6 @@ public class Answer extends BaseEntity{
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(mappedBy = "relative_answers",
-            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Question> relativeQuestions = new ArrayList<>();
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "answer")
     private List<AnswerParameter> parameters = new ArrayList<>();
 }

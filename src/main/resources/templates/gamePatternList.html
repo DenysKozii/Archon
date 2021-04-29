@@ -44,12 +44,7 @@
                 </a>
             </td>
             <td>
-                <div th:if="${friendEmail != null}">
-                    <a th:href="@{/game/new/{id}/{friendEmail}(id = ${qv.getId()}, friendEmail = ${friendEmail})}" class="btn btn-primary">
-                        <span>Start</span>
-                    </a>
-                </div>
-                <div th:if="${friendEmail == null}">
+                <div th:if="${qv.getAvailable()}">
                     <a th:href="@{/game/new/{id}(id = ${qv.getId()})}" class="btn btn-primary">
                         <span>Start</span>
                     </a>

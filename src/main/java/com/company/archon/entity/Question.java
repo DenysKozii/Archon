@@ -47,15 +47,7 @@ public class Question extends BaseEntity{
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "question_relative_answer",
-            joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "relative_answer_id"))
-    private List<Answer> relative_answers = new ArrayList<>();
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question")
     private List<QuestionParameter> questionParameters = new ArrayList<>();
 
     private Integer weight;

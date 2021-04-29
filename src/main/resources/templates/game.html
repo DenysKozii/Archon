@@ -37,14 +37,18 @@
         <thead>
             <tr>
                 <span th:each="qv,iter : ${game.getParameters()}">
-                    <th th:text="${qv.getTitle()}"></th>
+                    <div th:if="${qv.getVisible()}">
+                        <th th:text="${qv.getTitle()}"></th>
+                    </div>
                 </span>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <span th:each="qv,iter : ${game.getParameters()}">
-                    <td th:text="${qv.getValue()}"></td>
+                    <div th:if="${qv.getVisible()}">
+                        <td th:text="${qv.getValue()}"></td>
+                    </div>
                 </span>
             </tr>
         </tbody>

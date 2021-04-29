@@ -17,6 +17,4 @@ public class UserProfileDto {
 
     private String username;
 
-    private Integer availablePlotsAmount;
-
 }

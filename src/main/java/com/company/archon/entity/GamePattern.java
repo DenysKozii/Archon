@@ -31,14 +31,6 @@ public class GamePattern extends BaseEntity {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "game_pattern_user",
-            joinColumns = @JoinColumn(name = "game_pattern_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> users = new HashSet<>();
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy = "gamePattern")
     private List<Question> questions = new ArrayList<>();
 
@@ -53,4 +45,8 @@ public class GamePattern extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "gamePattern")
     private List<Parameter> parameters = new ArrayList<>();
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "gamePattern")
+    private List<ConditionParameter> conditionParameters = new ArrayList<>();
 }

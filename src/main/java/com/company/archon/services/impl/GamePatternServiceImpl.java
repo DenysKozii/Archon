@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,7 +48,6 @@ public class GamePatternServiceImpl implements GamePatternService {
         gamePattern.setTitle(title);
         gamePattern.setDeleted(false);
         gamePattern.setUsersAmount(1);
-        gamePattern.getUsers().add(user);
         gamePatternRepository.save(gamePattern);
 
         return GamePatternMapper.INSTANCE.mapToDto(gamePattern);
@@ -59,7 +59,7 @@ public class GamePatternServiceImpl implements GamePatternService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
 
-        List<GamePattern> available = gamePatternRepository.findByUsers(user);
+        List<GamePattern> available = availableByUser(user);
         Page<GamePattern> result = gamePatternRepository.findAll(PagesUtility.createPageableUnsorted(page, pageSize));
 
         List<GamePatternDto> gamePatternDtos = mapGamePattern(result.getContent()).stream()
@@ -74,6 +74,24 @@ public class GamePatternServiceImpl implements GamePatternService {
                 .forEach(o->o.setAvailable(true));
         gamePatternDtos.sort(Comparator.comparingLong(GamePatternDto::getOrderId));
         return PageDto.of(result.getTotalElements(), page, gamePatternDtos);
+    }
+
+    private List<GamePattern> availableByUser(User user){
+        List<GamePattern> gamePatterns = gamePatternRepository.findAll();
+        return gamePatterns.stream()
+                .filter(o->available(o, user))
+                .collect(Collectors.toList());
+    }
+
+    private boolean available(GamePattern gamePattern, User user){
+        for (ConditionParameter conditionParameter : gamePattern.getConditionParameters()) {
+            for (UserParameter userParameter: user.getUserParameters()) {
+                if (conditionParameter.getTitle().equals(userParameter.getTitle())
+                        && !conditionParameter.getValue().equals(userParameter.getValue()))
+                    return false;
+            }
+        }
+        return true;
     }
 
     private List<GamePatternDto> mapGamePattern(List<GamePattern> source) {
@@ -99,7 +117,6 @@ public class GamePatternServiceImpl implements GamePatternService {
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
         GamePattern gamePattern = gamePatternRepository.findById(gamePatternId)
                 .orElseThrow(() -> new EntityNotFoundException("GamePattern with id " + gamePatternId + " not found"));
-        gamePattern.getUsers().add(user);
         gamePatternRepository.save(gamePattern);
         return true;
     }

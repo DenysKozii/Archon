@@ -15,6 +15,4 @@ public interface UserRepository extends JpaRepository<User, Long>, PagingAndSort
 
     Page<User> findFriendsByUsername(String username, Pageable pageable);
 
-    List<User> findAllByGamePatterns(GamePattern gamePattern);
-
 }

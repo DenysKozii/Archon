@@ -16,7 +16,7 @@ import java.util.*;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "users")
-public class User extends BaseEntity implements UserDetails{
+public class User extends BaseEntity implements UserDetails {
 
     @NonNull
     @Column(unique = true, nullable = false)
@@ -48,15 +48,15 @@ public class User extends BaseEntity implements UserDetails{
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<GamePattern> gamePatterns = new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserParameter> userParameters = new ArrayList<>();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_friend",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName="id"))
+            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
     private List<User> friends = new ArrayList<>();
 
 
@@ -65,7 +65,7 @@ public class User extends BaseEntity implements UserDetails{
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "invite_friend",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName="id"))
+            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
     private List<FriendRequest> invite = new ArrayList<>();
 
     @ToString.Exclude
@@ -73,7 +73,7 @@ public class User extends BaseEntity implements UserDetails{
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "accept_friend",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName="id"))
+            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
     private List<FriendRequest> accept = new ArrayList<>();
 
     @Override
