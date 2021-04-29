@@ -30,7 +30,8 @@ public class UserController {
     }
 
     @PostMapping("/update/{parameterId}")
-    public String updateParameter(@PathVariable Long parameterId, @RequestParam Integer value) {
+    public String updateParameter(@PathVariable Long parameterId,
+                                  @RequestParam(defaultValue = "0") Integer value) {
         userService.updateParameter(parameterId, value);
         return "redirect:/profile";
     }

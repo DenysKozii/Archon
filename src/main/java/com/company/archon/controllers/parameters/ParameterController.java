@@ -4,6 +4,7 @@ import com.company.archon.dto.ParameterDto;
 import com.company.archon.entity.User;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.services.ParameterService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -12,16 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Controller
+@AllArgsConstructor
 @RequestMapping("/parameter")
 public class ParameterController {
 
     private final ParameterService parameterService;
-
-
-    @Autowired
-    public ParameterController(ParameterService parameterService) {
-        this.parameterService = parameterService;
-    }
 
 
     @PostMapping("/delete/{gamePatternId}/{parameterId}")
@@ -36,7 +32,7 @@ public class ParameterController {
                                @RequestParam Integer defaultValue,
                                @RequestParam Integer highestValue,
                                @RequestParam Integer lowestValue,
-                               @RequestParam Boolean visible, Model model) {
+                               @RequestParam(defaultValue = "false") Boolean visible, Model model) {
         parameterService.create(title, defaultValue, highestValue, lowestValue, visible, gamePatternId);
         model.addAttribute("gamePatternId", gamePatternId);
         return "redirect:/parameter/list/" + gamePatternId;

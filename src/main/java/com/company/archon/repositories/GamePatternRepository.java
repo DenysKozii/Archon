@@ -1,5 +1,6 @@
 package com.company.archon.repositories;
 
+import com.company.archon.entity.ConditionParameter;
 import com.company.archon.entity.GamePattern;
 import com.company.archon.entity.Parameter;
 import com.company.archon.entity.User;
@@ -22,4 +23,6 @@ public interface GamePatternRepository extends JpaRepository<GamePattern, Long>,
     Optional<GamePattern> findByTitle(String title);
 
     Optional<GamePattern> findByParametersContaining(Parameter parameter);
+
+    Optional<GamePattern> findByConditionParametersContaining(ConditionParameter parameter);
 }

@@ -220,7 +220,7 @@ public class GameServiceImpl implements GameService {
 
     private GameDto gameOverConditionCheck(Game game){
         if(gameParameterRepository.findAllByGame(game).stream()
-                .anyMatch(o -> o.getValue() <= o.getParameter().getLowestValue())){
+                .anyMatch(o -> o.getValue() < o.getParameter().getLowestValue())){
             game.setGameStatus(GameStatus.GAME_OVER);
             return mapToDto(game);
         }

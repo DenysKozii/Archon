@@ -6,6 +6,7 @@ import com.company.archon.exception.EntityNotFoundException;
 import com.company.archon.mapper.GamePatternMapper;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.pagination.PagesUtility;
+import com.company.archon.repositories.ConditionParameterRepository;
 import com.company.archon.repositories.GamePatternRepository;
 import com.company.archon.repositories.QuestionRepository;
 import com.company.archon.repositories.UserRepository;
@@ -33,15 +34,12 @@ public class GamePatternServiceImpl implements GamePatternService {
     private final QuestionService questionService;
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
+    private final ConditionParameterRepository conditionParameterRepository;
     private final AuthorizationService authorizationService;
 
 
     @Override
     public GamePatternDto createGamePattern(String title) {
-        String username = authorizationService.getProfileOfCurrent().getUsername();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
-
         GamePattern gamePattern = new GamePattern();
 
         gamePattern.setOrderId((long) gamePatternRepository.findAll().size());
@@ -49,8 +47,28 @@ public class GamePatternServiceImpl implements GamePatternService {
         gamePattern.setDeleted(false);
         gamePattern.setUsersAmount(1);
         gamePatternRepository.save(gamePattern);
-
+        fillConditionParameters(gamePattern);
         return GamePatternMapper.INSTANCE.mapToDto(gamePattern);
+    }
+
+    private void fillConditionParameters(GamePattern gamePattern) {
+        ConditionParameter parameter1 = new ConditionParameter();
+        parameter1.setTitle("Manipulation");
+        parameter1.setValue(0);
+        parameter1.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter1);
+
+        ConditionParameter parameter2 = new ConditionParameter();
+        parameter2.setTitle("Intellect");
+        parameter2.setValue(0);
+        parameter2.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter2);
+
+        ConditionParameter parameter3 = new ConditionParameter();
+        parameter3.setTitle("Knowledge");
+        parameter3.setValue(0);
+        parameter3.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter3);
     }
 
     @Override
@@ -87,7 +105,8 @@ public class GamePatternServiceImpl implements GamePatternService {
         for (ConditionParameter conditionParameter : gamePattern.getConditionParameters()) {
             for (UserParameter userParameter: user.getUserParameters()) {
                 if (conditionParameter.getTitle().equals(userParameter.getTitle())
-                        && !conditionParameter.getValue().equals(userParameter.getValue()))
+                        && conditionParameter.getValue() > 0
+                        && !(conditionParameter.getValue().equals(userParameter.getValue())))
                     return false;
             }
         }

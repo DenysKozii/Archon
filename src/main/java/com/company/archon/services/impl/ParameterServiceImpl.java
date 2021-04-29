@@ -76,12 +76,12 @@ public class ParameterServiceImpl implements ParameterService {
     public boolean deleteById(Long parameterId) {
         Parameter parameter = parameterRepository.findById(parameterId)
                 .orElseThrow(()->new EntityNotFoundException("Parameter with id " + parameterId + " not found"));
-        Optional<GamePattern> gamePatternOptional = gamePatternRepository.findByParametersContaining(parameter);
-        if (gamePatternOptional.isPresent()){
-            gamePatternOptional.get().getParameters().remove(parameter);
-            gamePatternRepository.save(gamePatternOptional.get());
-        }
-        parameterRepository.save(parameter);
+//        Optional<GamePattern> gamePatternOptional = gamePatternRepository.findByParametersContaining(parameter);
+//        if (gamePatternOptional.isPresent()){
+//            gamePatternOptional.get().getParameters().remove(parameter);
+//            gamePatternRepository.save(gamePatternOptional.get());
+//        }
+        parameterRepository.delete(parameter);
         return true;
     }
 }
