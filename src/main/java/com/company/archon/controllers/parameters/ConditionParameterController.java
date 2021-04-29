@@ -17,22 +17,40 @@ public class ConditionParameterController {
 
     private final ConditionParameterService conditionParameterService;
 
-    @PostMapping("/update/{gamePatternId}/{parameterId}")
-    public String newParameter(@PathVariable Long gamePatternId,
+    @PostMapping("/update/start/{gamePatternId}/{parameterId}")
+    public String updateStart(@PathVariable Long gamePatternId,
                                @PathVariable Long parameterId,
-                               @RequestParam(defaultValue = "0") Integer value,
+                               @RequestParam(defaultValue = "0") Integer valueStart,
                                Model model) {
-        conditionParameterService.update(value, parameterId);
+        conditionParameterService.updateStart(valueStart, parameterId);
         model.addAttribute("gamePatternId", gamePatternId);
-        return "redirect:/conditionParameter/list/" + gamePatternId;
+        return "redirect:/conditionParameter/list/start/" + gamePatternId;
     }
 
-    @GetMapping("/list/{gamePatternId}")
-    public String conditionParametersList(@PathVariable Long gamePatternId, Model model) {
+    @PostMapping("/update/finish/{gamePatternId}/{parameterId}")
+    public String updateFinish(@PathVariable Long gamePatternId,
+                               @PathVariable Long parameterId,
+                               @RequestParam(defaultValue = "0") Integer valueFinish,
+                               Model model) {
+        conditionParameterService.updateFinish(valueFinish, parameterId);
+        model.addAttribute("gamePatternId", gamePatternId);
+        return "redirect:/conditionParameter/list/finish/" + gamePatternId;
+    }
+
+    @GetMapping("/list/start/{gamePatternId}")
+    public String conditionParametersStartList(@PathVariable Long gamePatternId, Model model) {
         List<ConditionParameterDto> parameters = conditionParameterService.getParametersByGamePatternId(gamePatternId);
         model.addAttribute("parameters", parameters);
         model.addAttribute("gamePatternId", gamePatternId);
-        return "parameter/conditionsList";
+        return "/parameter/conditionsStartList";
+    }
+
+    @GetMapping("/list/finish/{gamePatternId}")
+    public String conditionParametersFinishList(@PathVariable Long gamePatternId, Model model) {
+        List<ConditionParameterDto> parameters = conditionParameterService.getParametersByGamePatternId(gamePatternId);
+        model.addAttribute("parameters", parameters);
+        model.addAttribute("gamePatternId", gamePatternId);
+        return "/parameter/conditionsFinishList";
     }
 
 }

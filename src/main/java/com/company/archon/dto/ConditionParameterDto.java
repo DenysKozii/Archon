@@ -18,6 +18,8 @@ public class ConditionParameterDto extends BaseDto {
 
     private String title;
 
-    private Integer value;
+    private Integer valueStart;
+
+    private Integer valueFinish;
 
 }

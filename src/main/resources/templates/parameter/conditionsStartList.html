@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/components/common :: header(value='Results')}"></div>
+<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<body>
+<div class="container">
+    <h3>Condition parameters</h3>
+    <br>
+    <div class="d-flex flex-row my-3 mx-3">
+        <a th:href="@{/conditionParameter/list/finish/{id}(id = ${gamePatternId})}" class="btn btn-primary">
+            <span>Next</span>
+        </a>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Value start</th>
+            <th scope="col">Update</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="qv,iter : ${parameters}">
+            <form method="post" th:action="@{/conditionParameter/update/start/{gamePatternId}/{parameterId}
+            (gamePatternId = ${gamePatternId}, parameterId = ${qv.getId()})}">
+                <td th:text="${iter.index} + 1"></td>
+                <td th:text="${qv.getTitle()}"></td>
+                <td>
+                    <div class="form-group">
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueStart()}"
+                               name="valueStart"/>
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

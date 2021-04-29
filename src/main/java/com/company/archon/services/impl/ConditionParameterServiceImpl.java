@@ -42,12 +42,19 @@ public class ConditionParameterServiceImpl implements ConditionParameterService 
     }
 
     @Override
-    public boolean update(Integer value, Long parameterId) {
+    public void updateStart(Integer valueStart, Long parameterId) {
         ConditionParameter conditionParameter = conditionParameterRepository.findById(parameterId)
-                .orElseThrow(()->new EntityNotFoundException("ConditionParameter with id " + parameterId + " not found"));
-        conditionParameter.setValue(value);
+                .orElseThrow(() -> new EntityNotFoundException("ConditionParameter with id " + parameterId + " not found"));
+        conditionParameter.setValueStart(valueStart);
         conditionParameterRepository.save(conditionParameter);
-        return true;
+    }
+
+    @Override
+    public void updateFinish(Integer valueFinish, Long parameterId) {
+        ConditionParameter conditionParameter = conditionParameterRepository.findById(parameterId)
+                .orElseThrow(() -> new EntityNotFoundException("ConditionParameter with id " + parameterId + " not found"));
+        conditionParameter.setValueFinish(valueFinish);
+        conditionParameterRepository.save(conditionParameter);
     }
 
 }

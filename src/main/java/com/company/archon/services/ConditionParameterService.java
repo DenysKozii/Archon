@@ -9,5 +9,7 @@ import java.util.List;
 public interface ConditionParameterService {
     List<ConditionParameterDto> getParametersByGamePatternId(Long gamePatternId);
 
-    boolean update(Integer value, Long parameterId);
+    void updateStart(Integer valueStart, Long parameterId);
+
+    void updateFinish(Integer valueFinish, Long parameterId);
 }

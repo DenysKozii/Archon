@@ -54,19 +54,22 @@ public class GamePatternServiceImpl implements GamePatternService {
     private void fillConditionParameters(GamePattern gamePattern) {
         ConditionParameter parameter1 = new ConditionParameter();
         parameter1.setTitle("Manipulation");
-        parameter1.setValue(0);
+        parameter1.setValueStart(0);
+        parameter1.setValueFinish(0);
         parameter1.setGamePattern(gamePattern);
         conditionParameterRepository.save(parameter1);
 
         ConditionParameter parameter2 = new ConditionParameter();
         parameter2.setTitle("Intellect");
-        parameter2.setValue(0);
+        parameter2.setValueStart(0);
+        parameter2.setValueFinish(0);
         parameter2.setGamePattern(gamePattern);
         conditionParameterRepository.save(parameter2);
 
         ConditionParameter parameter3 = new ConditionParameter();
         parameter3.setTitle("Knowledge");
-        parameter3.setValue(0);
+        parameter3.setValueStart(0);
+        parameter3.setValueFinish(0);
         parameter3.setGamePattern(gamePattern);
         conditionParameterRepository.save(parameter3);
     }
@@ -105,8 +108,8 @@ public class GamePatternServiceImpl implements GamePatternService {
         for (ConditionParameter conditionParameter : gamePattern.getConditionParameters()) {
             for (UserParameter userParameter: user.getUserParameters()) {
                 if (conditionParameter.getTitle().equals(userParameter.getTitle())
-                        && conditionParameter.getValue() > 0
-                        && !(conditionParameter.getValue().equals(userParameter.getValue())))
+                        && conditionParameter.getValueStart() > 0
+                        && !(conditionParameter.getValueStart().equals(userParameter.getValue())))
                     return false;
             }
         }

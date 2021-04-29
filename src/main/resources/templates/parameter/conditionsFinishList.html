@@ -16,20 +16,20 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Title</th>
-            <th scope="col">Value</th>
+            <th scope="col">Value finish</th>
             <th scope="col">Update</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="qv,iter : ${parameters}">
-            <form method="post" th:action="@{/conditionParameter/update/{gamePatternId}/{parameterId}
+            <form method="post" th:action="@{/conditionParameter/update/finish/{gamePatternId}/{parameterId}
             (gamePatternId = ${gamePatternId}, parameterId = ${qv.getId()})}">
                 <td th:text="${iter.index} + 1"></td>
                 <td th:text="${qv.getTitle()}"></td>
                 <td>
                     <div class="form-group">
-                        <input type="number" class="form-control" th:placeholder="${qv.getValue()}"
-                               name="value"/>
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueFinish()}"
+                               name="valueFinish"/>
                     </div>
                 </td>
                 <td>

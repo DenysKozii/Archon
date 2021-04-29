@@ -25,4 +25,6 @@ public class Answer extends BaseEntity{
     @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "answer")
     private List<AnswerParameter> parameters = new ArrayList<>();
+
+
 }
