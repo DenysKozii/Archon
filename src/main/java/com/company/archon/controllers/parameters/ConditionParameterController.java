@@ -42,7 +42,7 @@ public class ConditionParameterController {
         List<ConditionParameterDto> parameters = conditionParameterService.getParametersByGamePatternId(gamePatternId);
         model.addAttribute("parameters", parameters);
         model.addAttribute("gamePatternId", gamePatternId);
-        return "/parameter/conditionsStartList";
+        return "conditionsStartList";
     }
 
     @GetMapping("/list/finish/{gamePatternId}")
@@ -50,7 +50,7 @@ public class ConditionParameterController {
         List<ConditionParameterDto> parameters = conditionParameterService.getParametersByGamePatternId(gamePatternId);
         model.addAttribute("parameters", parameters);
         model.addAttribute("gamePatternId", gamePatternId);
-        return "/parameter/conditionsFinishList";
+        return "conditionsFinishList";
     }
 
 }

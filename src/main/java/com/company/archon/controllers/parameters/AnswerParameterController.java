@@ -34,7 +34,7 @@ public class AnswerParameterController {
         model.addAttribute("questionId", questionId);
         model.addAttribute("userParameters", userParameters);
         model.addAttribute("parameters", parameters.getObjects());
-        return "parameter/answerParametersList";
+        return "answerParametersList";
     }
 
     @PostMapping("/update/user/{gamePatternId}/{questionId}/{answerId}/{parameterId}")
@@ -50,7 +50,7 @@ public class AnswerParameterController {
         model.addAttribute("questionId", questionId);
         model.addAttribute("userParameters", userParameters);
         model.addAttribute("parameters", parameters.getObjects());
-        return "parameter/answerParametersList";
+        return "answerParametersList";
     }
 
     private void addAttributes(Model model){

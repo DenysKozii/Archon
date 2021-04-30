@@ -20,6 +20,7 @@ public class Question extends BaseEntity{
     @NonNull
     private String context;
 
+    private Boolean gameOverCondition;
     @ManyToOne
     @JoinColumn(name = "image_id")
     private Image image;

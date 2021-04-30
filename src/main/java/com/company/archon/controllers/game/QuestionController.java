@@ -1,22 +1,18 @@
 package com.company.archon.controllers.game;
 
 import com.company.archon.dto.QuestionDto;
-import com.company.archon.dto.QuestionParameterDto;
-import com.company.archon.dto.QuestionUserParameterDto;
 import com.company.archon.entity.User;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.services.ParameterService;
 import com.company.archon.services.QuestionParameterService;
 import com.company.archon.services.QuestionService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @Controller
 @AllArgsConstructor
@@ -32,7 +28,7 @@ public class QuestionController {
         QuestionDto question = questionService.createNewQuestion(gamePatternId);
         model.addAttribute("gamePatternId",gamePatternId);
         model.addAttribute("id", question.getId());
-        return "question/questionCreator";
+        return "questionCreator";
     }
 
     @RequestMapping("/delete/{gamePatternId}/{questionId}")
@@ -61,7 +57,7 @@ public class QuestionController {
         model.addAttribute("gamePatternId", gamePatternId);
         model.addAttribute("userParameters", questionDto.getQuestionUserParameters());
         model.addAttribute("parameters", questionDto.getQuestionParameters());
-        return "parameter/questionParametersList";
+        return "questionParametersList";
     }
 
     @GetMapping("/list/{gamePatternId}")
@@ -69,7 +65,7 @@ public class QuestionController {
         PageDto<QuestionDto> questions = questionService.getQuestionsByGamePatternId(gamePatternId, 0, 150);
         model.addAttribute("questions", questions.getObjects());
         model.addAttribute("gamePatternId",gamePatternId);
-        return "question/questionsList";
+        return "questionsList";
     }
 
     @GetMapping("/relativeQuestions/{gamePatternId}/{questionId}")
@@ -77,7 +73,7 @@ public class QuestionController {
         PageDto<QuestionDto> questions = questionService.getRelativeQuestionsByGamePatternId(gamePatternId,questionId,0, 150);
         model.addAttribute("questions", questions.getObjects());
         model.addAttribute("gamePatternId",gamePatternId);
-        return "question/relativeQuestionsList";
+        return "relativeQuestionsList";
     }
 
     @GetMapping("/addRelativeQuestion/{gamePatternId}/{questionId}/{relativeId}")
@@ -85,6 +81,6 @@ public class QuestionController {
         PageDto<QuestionDto> questions = questionService.addRelativeQuestion(questionId, relativeId,0,150);
         model.addAttribute("questions", questions.getObjects());
         model.addAttribute("gamePatternId",gamePatternId);
-        return "question/relativeQuestionsList";
+        return "relativeQuestionsList";
     }
 }

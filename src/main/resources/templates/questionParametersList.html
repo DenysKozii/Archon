@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:replace="~{/components/common :: header(value='Results')}"></div>
-<div th:replace="~{/components/common :: navbar(game=false)}"></div>
+<div th:replace="~{common :: header(value='Results')}"></div>
+<div th:replace="~{common :: navbar(game=false)}"></div>
 <body>
 <div class="container">
-    <h3>Answer parameters</h3>
+    <h3>Question parameters</h3>
     <br>
     <a th:href="@{/answer/new/{gamePatternId}/{questionId}
                     (questionId = ${questionId}, gamePatternId = ${gamePatternId})}"
@@ -16,19 +16,26 @@
         <thead>
         <tr>
             <th scope="col">Title</th>
-            <th scope="col">influence</th>
+            <th scope="col">Appear</th>
+            <th scope="col">Disappear</th>
             <th scope="col">Update</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="qv,iter : ${parameters}">
             <form method="post"
-                  th:action="@{/answerParameter/update/{gamePatternId}/{questionId}/{answerId}/{parameterId}(gamePatternId = ${gamePatternId}, questionId = ${questionId},answerId=${answerId}, parameterId = ${qv.getId()})}">
+                  th:action="@{/questionParameter/update/{gamePatternId}/{questionId}/{parameterId}(gamePatternId = ${gamePatternId},questionId = ${questionId}, parameterId = ${qv.getId()})}">
                 <td th:text="${qv.getTitle()}"></td>
                 <td>
                     <div class="form-group">
-                        <input type="number" class="form-control"
-                               name="influence" th:placeholder="${qv.getValue()}" required=""/>
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueAppear()}"
+                               name="appear"/>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueDisappear()}"
+                               name="disappear"/>
                     </div>
                 </td>
                 <td>
@@ -40,12 +47,18 @@
         </tr>
         <tr th:each="qv,iter : ${userParameters}">
             <form method="post"
-                  th:action="@{/answerParameter/update/user/{gamePatternId}/{questionId}/{answerId}/{parameterId}(gamePatternId = ${gamePatternId}, questionId = ${questionId},answerId=${answerId}, parameterId = ${qv.getId()})}">
+                  th:action="@{/questionParameter/update/user/{gamePatternId}/{questionId}/{parameterId}(gamePatternId = ${gamePatternId},questionId = ${questionId}, parameterId = ${qv.getId()})}">
                 <td th:text="${qv.getTitle()}"></td>
                 <td>
                     <div class="form-group">
-                        <input type="number" class="form-control"
-                               name="influence" th:placeholder="${qv.getValue()}" required=""/>
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueAppear()}"
+                               name="appear"/>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <input type="number" class="form-control" th:placeholder="${qv.getValueDisappear()}"
+                               name="disappear"/>
                     </div>
                 </td>
                 <td>

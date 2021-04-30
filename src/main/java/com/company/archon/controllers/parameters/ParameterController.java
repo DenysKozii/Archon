@@ -1,12 +1,9 @@
 package com.company.archon.controllers.parameters;
 
 import com.company.archon.dto.ParameterDto;
-import com.company.archon.entity.User;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.services.ParameterService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +40,7 @@ public class ParameterController {
         PageDto<ParameterDto> parameters = parameterService.getParametersByGamePatternId(gamePatternId);
         model.addAttribute("parameters", parameters.getObjects());
         model.addAttribute("gamePatternId", gamePatternId);
-        return "parameter/parametersList";
+        return "parametersList";
     }
 
 }

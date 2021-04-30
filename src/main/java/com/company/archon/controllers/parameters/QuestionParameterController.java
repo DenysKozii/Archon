@@ -1,15 +1,10 @@
 package com.company.archon.controllers.parameters;
 
-import com.company.archon.dto.ParameterDto;
 import com.company.archon.dto.QuestionParameterDto;
 import com.company.archon.dto.QuestionUserParameterDto;
-import com.company.archon.entity.User;
 import com.company.archon.pagination.PageDto;
-import com.company.archon.services.ParameterService;
 import com.company.archon.services.QuestionParameterService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +32,7 @@ public class QuestionParameterController {
         model.addAttribute("questionId", questionId);
         model.addAttribute("parameters", questionParameters.getObjects());
         model.addAttribute("userParameters", questionUserParameters);
-        return "parameter/questionParametersList";
+        return "questionParametersList";
     }
 
     @PostMapping("/update/user/{gamePatternId}/{questionId}/{parameterId}")
@@ -53,7 +48,7 @@ public class QuestionParameterController {
         model.addAttribute("questionId", questionId);
         model.addAttribute("parameters", questionParameters.getObjects());
         model.addAttribute("userParameters", questionUserParameters);
-        return "parameter/questionParametersList";
+        return "questionParametersList";
     }
 
 }
