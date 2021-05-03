@@ -1,0 +1,11 @@
+ssh kaniel@178.159.236.8
+
+scp target/Archon-1.0-SNAPSHOT.jar kaniel@178.159.236.8:~/
+
+mysql -u root -p
+
+ps -A |grep java
+
+kill 3857
+
+java -jar Archon-1.0-SNAPSHOT.jar
