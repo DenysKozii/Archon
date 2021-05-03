@@ -52,26 +52,110 @@ public class GamePatternServiceImpl implements GamePatternService {
     }
 
     private void fillConditionParameters(GamePattern gamePattern) {
+        ConditionParameter parameter0 = new ConditionParameter();
+        parameter0.setTitle("Осколки душ");
+        parameter0.setValueStart(0);
+        parameter0.setValueFinish(9999);
+        parameter0.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter0);
+
         ConditionParameter parameter1 = new ConditionParameter();
-        parameter1.setTitle("Manipulation");
+        parameter1.setTitle("Талант к магии");
         parameter1.setValueStart(0);
         parameter1.setValueFinish(0);
         parameter1.setGamePattern(gamePattern);
         conditionParameterRepository.save(parameter1);
 
         ConditionParameter parameter2 = new ConditionParameter();
-        parameter2.setTitle("Intellect");
+        parameter2.setTitle("Смышленность");
         parameter2.setValueStart(0);
         parameter2.setValueFinish(0);
         parameter2.setGamePattern(gamePattern);
         conditionParameterRepository.save(parameter2);
 
         ConditionParameter parameter3 = new ConditionParameter();
-        parameter3.setTitle("Knowledge");
+        parameter3.setTitle("Призрение к миру");
         parameter3.setValueStart(0);
         parameter3.setValueFinish(0);
         parameter3.setGamePattern(gamePattern);
         conditionParameterRepository.save(parameter3);
+
+        ConditionParameter parameter4 = new ConditionParameter();
+        parameter4.setTitle("Талант к эфиру");
+        parameter4.setValueStart(0);
+        parameter4.setValueFinish(0);
+        parameter4.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter4);
+
+        ConditionParameter parameter5 = new ConditionParameter();
+        parameter5.setTitle("Талант к духу");
+        parameter5.setValueStart(0);
+        parameter5.setValueFinish(0);
+        parameter5.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter5);
+
+        ConditionParameter parameter6 = new ConditionParameter();
+        parameter6.setTitle("Харизма");
+        parameter6.setValueStart(0);
+        parameter6.setValueFinish(0);
+        parameter6.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter6);
+
+        ConditionParameter parameter7 = new ConditionParameter();
+        parameter7.setTitle("Интеллект");
+        parameter7.setValueStart(0);
+        parameter7.setValueFinish(0);
+        parameter7.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter7);
+
+        ConditionParameter parameter8 = new ConditionParameter();
+        parameter8.setTitle("Жестокость");
+        parameter8.setValueStart(0);
+        parameter8.setValueFinish(0);
+        parameter8.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter8);
+
+        ConditionParameter parameter9 = new ConditionParameter();
+        parameter9.setTitle("Манипуляции");
+        parameter9.setValueStart(0);
+        parameter9.setValueFinish(0);
+        parameter9.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter9);
+
+        ConditionParameter parameter10 = new ConditionParameter();
+        parameter10.setTitle("Единость с миром");
+        parameter10.setValueStart(0);
+        parameter10.setValueFinish(0);
+        parameter10.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter10);
+
+        ConditionParameter parameter11 = new ConditionParameter();
+        parameter11.setTitle("Правление");
+        parameter11.setValueStart(0);
+        parameter11.setValueFinish(0);
+        parameter11.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter11);
+
+        ConditionParameter parameter12 = new ConditionParameter();
+        parameter12.setTitle("Гениальность");
+        parameter12.setValueStart(0);
+        parameter12.setValueFinish(0);
+        parameter12.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter12);
+
+        ConditionParameter parameter13 = new ConditionParameter();
+        parameter13.setTitle("Кровожадность");
+        parameter13.setValueStart(0);
+        parameter13.setValueFinish(0);
+        parameter13.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter13);
+
+        ConditionParameter parameter14 = new ConditionParameter();
+        parameter14.setTitle("Властвование");
+        parameter14.setValueStart(0);
+        parameter14.setValueFinish(0);
+        parameter14.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter14);
     }
 
     @Override
