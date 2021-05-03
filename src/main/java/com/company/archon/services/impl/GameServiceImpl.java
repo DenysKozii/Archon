@@ -70,6 +70,7 @@ public class GameServiceImpl implements GameService {
         gameDto.setId(game.getId());
         gameDto.setGameStatus(game.getGameStatus());
         gameDto.setGamePatternId(game.getGamePattern().getId());
+        gameDto.setGameStatus(game.getGameStatus());
 
         QuestionDto question = nextQuestion(game);
         gameDto.setQuestion(question);
@@ -77,6 +78,9 @@ public class GameServiceImpl implements GameService {
         if(question != null) {
             List<AnswerDto> answers = answerService.getAnswersByQuestionId(question.getId());
             gameDto.setAnswers(answers);
+
+            game.setGameStatus(question.getStatus());
+            gameRepository.save(game);
         }
 
         List<GameParameterDto> parameters = gameParameterService.getByGameId(game.getId());
@@ -226,7 +230,9 @@ public class GameServiceImpl implements GameService {
         game.setQuestionsPull(changeQuestions(game));
         gameRepository.save(game);
 
-        return gameOverConditionCheck(game);
+//        return gameOverConditionCheck(game);
+        return mapToDto(game);
+
     }
 
     @Override
@@ -245,31 +251,22 @@ public class GameServiceImpl implements GameService {
         return true;
     }
 
-    private GameDto gameOverConditionCheck(Game game){
-        if(gameParameterRepository.findAllByGame(game).stream()
-                .anyMatch(o -> o.getValue() < o.getParameter().getLowestValue()))
-            game.setGameStatus(GameStatus.GAME_OVER);
-        if(gameCompletedConditionCheck(game))
-            game.setGameStatus(GameStatus.COMPLETED);
-        return mapToDto(game);
-    }
 
-
-    private boolean gameCompletedConditionCheck(Game game){
-        String username = authorizationService.getProfileOfCurrent().getUsername();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
-
-        GamePattern gamePattern = game.getGamePattern();
-        for (ConditionParameter conditionParameter: gamePattern.getConditionParameters()) {
-            for (UserParameter userParameter:user.getUserParameters()) {
-                if (conditionParameter.getTitle().equals(userParameter.getTitle())
-                        && conditionParameter.getValueFinish() > 0
-                        && !(conditionParameter.getValueFinish().equals(userParameter.getValue())))
-                    return false;
-            }
-        }
-        return true;
-    }
+//    private boolean gameCompletedConditionCheck(Game game){
+//        String username = authorizationService.getProfileOfCurrent().getUsername();
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+//
+//        GamePattern gamePattern = game.getGamePattern();
+//        for (ConditionParameter conditionParameter: gamePattern.getConditionParameters()) {
+//            for (UserParameter userParameter:user.getUserParameters()) {
+//                if (conditionParameter.getTitle().equals(userParameter.getTitle())
+//                        && conditionParameter.getValueFinish() > 0
+//                        && !(conditionParameter.getValueFinish().equals(userParameter.getValue())))
+//                    return false;
+//            }
+//        }
+//        return true;
+//    }
 
 }

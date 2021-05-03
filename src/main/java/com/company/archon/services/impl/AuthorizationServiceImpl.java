@@ -38,7 +38,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         Long userId = Long.valueOf(principal instanceof UserDetails ?
                 ((UserDetails)principal).getUsername() : principal.toString());
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
         return new UserProfileDto(
                 user.getId(),
                 user.getUsername()

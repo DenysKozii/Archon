@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{common :: header(value='Game')}"></div>
+<div th:replace="~{common :: navbar(game=true)}"></div>
+<body class="bg-light">
+<div class="container">
+    <div class="col-10 alert alert-primary" role="alert">
+        <h4>No questions</h4>
+    </div>
+</div>
+</body>
+<div th:replace="~{common :: js-lb}"></div>
+</html>

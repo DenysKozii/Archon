@@ -1,5 +1,6 @@
 package com.company.archon.dto;
 
+import com.company.archon.enums.GameStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -22,6 +23,8 @@ public class QuestionDto extends BaseDto {
     private String title;
 
     private String context;
+
+    private GameStatus status;
 
     private Image image;
 

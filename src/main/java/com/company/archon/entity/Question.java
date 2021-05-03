@@ -1,5 +1,6 @@
 package com.company.archon.entity;
 
+import com.company.archon.enums.GameStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,6 +20,8 @@ public class Question extends BaseEntity{
     private String title;
     @NonNull
     private String context;
+
+    private GameStatus status = GameStatus.RUNNING;
 
     private Boolean gameOverCondition;
     @ManyToOne

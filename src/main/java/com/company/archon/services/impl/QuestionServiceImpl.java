@@ -2,6 +2,7 @@ package com.company.archon.services.impl;
 
 import com.company.archon.dto.QuestionDto;
 import com.company.archon.entity.*;
+import com.company.archon.enums.GameStatus;
 import com.company.archon.exception.EntityNotFoundException;
 import com.company.archon.mapper.QuestionMapper;
 import com.company.archon.pagination.PageDto;
@@ -165,12 +166,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public QuestionDto updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, MultipartFile multipartFile) throws IOException {
+    public QuestionDto updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, GameStatus status, MultipartFile multipartFile) throws IOException {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
         question.setTitle(title);
         question.setContext(context);
         question.setWeight(weight);
+        question.setStatus(status);
 //        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 //        if (!fileName.isEmpty()){
 //            question.setImage(String.format("/uploads/%s", fileName));

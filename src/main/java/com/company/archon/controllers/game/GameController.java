@@ -38,6 +38,9 @@ public class GameController {
             gameService.deleteById(gameId);
             return "gameCompleted";
         }
+        if (game.getQuestion() == null){
+            return "noQuestion";
+        }
         return "game";
     }
 

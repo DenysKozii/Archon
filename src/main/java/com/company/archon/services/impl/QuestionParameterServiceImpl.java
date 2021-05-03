@@ -51,8 +51,10 @@ public class QuestionParameterServiceImpl implements QuestionParameterService {
     public boolean update(Long parameterId, Integer appear, Integer disappear) {
         QuestionParameter questionParameter = questionParameterRepository.findById(parameterId)
                 .orElseThrow(() -> new EntityNotFoundException("QuestionParameter with id " + parameterId + " not found"));
-        questionParameter.setValueAppear(appear);
-        questionParameter.setValueDisappear(disappear);
+        if (appear != null)
+            questionParameter.setValueAppear(appear);
+        if (disappear != null)
+            questionParameter.setValueDisappear(disappear);
         questionParameterRepository.save(questionParameter);
         return true;
     }
@@ -70,8 +72,10 @@ public class QuestionParameterServiceImpl implements QuestionParameterService {
     public void updateUserParameter(Long parameterId, Integer appear, Integer disappear) {
         QuestionUserParameter questionParameter = questionUserParameterRepository.findById(parameterId)
                 .orElseThrow(() -> new EntityNotFoundException("QuestionUserParameter with id " + parameterId + " not found"));
-        questionParameter.setValueAppear(appear);
-        questionParameter.setValueDisappear(disappear);
+        if (appear != null)
+            questionParameter.setValueAppear(appear);
+        if (disappear != null)
+            questionParameter.setValueDisappear(disappear);
         questionUserParameterRepository.save(questionParameter);
     }
 }

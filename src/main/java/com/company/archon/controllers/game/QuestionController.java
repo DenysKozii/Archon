@@ -2,6 +2,7 @@ package com.company.archon.controllers.game;
 
 import com.company.archon.dto.QuestionDto;
 import com.company.archon.entity.User;
+import com.company.archon.enums.GameStatus;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.services.ParameterService;
 import com.company.archon.services.QuestionParameterService;
@@ -11,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -44,12 +46,14 @@ public class QuestionController {
                               @RequestParam String title,
                               @RequestParam String context,
                               @RequestParam Integer weight,
-//                              @RequestParam("fileImage") MultipartFile multipartFile,
+                              @RequestParam GameStatus status,
+                              @RequestParam(value = "fileImage", required = false) MultipartFile multipartFile,
                               Model model) throws IOException {
         QuestionDto questionDto = questionService.updateQuestion(gamePatternId, questionId,
                 title,
                 context,
                 weight,
+                status,
                 null);
 //        PageDto<QuestionParameterDto> questionParameters = questionParameterService.getParametersByQuestionId(questionId,0,150);
 //        List<QuestionUserParameterDto> userParameters = questionParameterService.getUserParametersByQuestionId(questionId);
