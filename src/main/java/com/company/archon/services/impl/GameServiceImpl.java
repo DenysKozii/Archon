@@ -75,7 +75,7 @@ public class GameServiceImpl implements GameService {
         QuestionDto question = nextQuestion(game);
         gameDto.setQuestion(question);
 
-        if(question != null) {
+        if (question != null) {
             List<AnswerDto> answers = answerService.getAnswersByQuestionId(question.getId());
             gameDto.setAnswers(answers);
 
@@ -157,7 +157,7 @@ public class GameServiceImpl implements GameService {
 
     private List<GameDto> mapToDto(List<Game> games) {
         List<GameDto> gameDtos = games.stream()
-                .filter(o->GameStatus.PAUSED.equals(o.getGameStatus()))
+                .filter(o -> GameStatus.PAUSED.equals(o.getGameStatus()))
                 .map(GameMapper.INSTANCE::mapToDto)
                 .collect(Collectors.toList());
         for (GameDto gameDto : gameDtos) {
@@ -210,21 +210,26 @@ public class GameServiceImpl implements GameService {
                 .orElseThrow(() -> new EntityNotFoundException("Answer with id " + answerId + " not found"));
 
         gameParameterRepository.findAllByGame(game)
-                .forEach(o->o.setValue(Integer.min(o.getParameter().getHighestValue(),
-                        o.getValue()+answerParameterRepository
-                                .findByTitleAndAnswer(o.getParameter().getTitle(), answer)
-                                .orElseThrow(() -> new EntityNotFoundException("AnswerParameter with title " + o.getParameter().getTitle() + " not found"))
-                                .getValue())));
+                .forEach(o ->
+                {
+                    o.setValue(Integer.min(o.getParameter().getHighestValue(),
+                            o.getValue() + answerParameterRepository
+                                    .findByTitleAndAnswer(o.getParameter().getTitle(), answer)
+                                    .orElseThrow(() -> new EntityNotFoundException("AnswerParameter with title " + o.getParameter().getTitle() + " not found"))
+                                    .getValue()));
+                    o.setValue(Integer.max(o.getParameter().getLowestValue(),
+                            o.getValue()));
+                });
 
         String username = authorizationService.getProfileOfCurrent().getUsername();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
         user.getUserParameters()
-                .forEach(o->o.setValue(Integer.min(1,
-                o.getValue()+answerUserParameterRepository
-                        .findByTitleAndAnswer(o.getTitle(), answer)
-                        .orElseThrow(() -> new EntityNotFoundException("AnswerUserParameter with title " + o.getTitle() + " not found"))
-                        .getValue())));
+                .forEach(o -> o.setValue(Integer.min(1,
+                        o.getValue() + answerUserParameterRepository
+                                .findByTitleAndAnswer(o.getTitle(), answer)
+                                .orElseThrow(() -> new EntityNotFoundException("AnswerUserParameter with title " + o.getTitle() + " not found"))
+                                .getValue())));
 
         gameRepository.save(game);
         game.setQuestionsPull(changeQuestions(game));
