@@ -60,8 +60,10 @@ public class AnswerParameterServiceImpl implements AnswerParameterService {
                 .orElseThrow(()->new EntityNotFoundException("Answer with id " + answerId + " not found"));
 
         Page<AnswerParameter> result = answerParameterRepository.findAllByAnswer(answer, PagesUtility.createPageableUnsorted(page, pageSize));
-        result.getContent().sort(Comparator.comparingLong(BaseEntity::getId));
-        return PageDto.of(result.getTotalElements(), page, mapToDto(result.getContent()));
+        List<AnswerParameter> parameters = result.getContent().stream()
+                .sorted(Comparator.comparingLong(BaseEntity::getId))
+                .collect(Collectors.toList());
+        return PageDto.of(result.getTotalElements(), page, mapToDto(parameters));
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +36,10 @@ public class ParameterServiceImpl implements ParameterService {
     @Override
     public PageDto<ParameterDto> getParametersByGamePatternId(Long gamePatternId) {
         Page<Parameter> result = parameterRepository.findAllByGamePatternId(gamePatternId, PagesUtility.createPageableUnsorted(0, 150));
-        result.getContent().sort(Comparator.comparingLong(BaseEntity::getId));
-        return PageDto.of(result.getTotalElements(), 0, mapToDto(result.getContent()));
+        List<Parameter> parameters = result.getContent().stream()
+                .sorted(Comparator.comparingLong(BaseEntity::getId))
+                .collect(Collectors.toList());
+        return PageDto.of(result.getTotalElements(), 0, mapToDto(parameters));
     }
 
     private List<ParameterDto> mapToDto(List<Parameter> parameters) {
