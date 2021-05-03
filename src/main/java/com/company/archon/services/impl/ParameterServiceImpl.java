@@ -1,6 +1,8 @@
 package com.company.archon.services.impl;
 
 import com.company.archon.dto.ParameterDto;
+import com.company.archon.entity.AnswerParameter;
+import com.company.archon.entity.BaseEntity;
 import com.company.archon.entity.GamePattern;
 import com.company.archon.entity.Parameter;
 import com.company.archon.exception.EntityNotFoundException;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +35,7 @@ public class ParameterServiceImpl implements ParameterService {
     @Override
     public PageDto<ParameterDto> getParametersByGamePatternId(Long gamePatternId) {
         Page<Parameter> result = parameterRepository.findAllByGamePatternId(gamePatternId, PagesUtility.createPageableUnsorted(0, 150));
+        result.getContent().sort(Comparator.comparingLong(BaseEntity::getId));
         return PageDto.of(result.getTotalElements(), 0, mapToDto(result.getContent()));
     }
 

@@ -2,6 +2,7 @@ package com.company.archon.services.impl;
 
 import com.company.archon.dto.AnswerParameterDto;
 import com.company.archon.dto.AnswerUserParameterDto;
+import com.company.archon.dto.BaseDto;
 import com.company.archon.entity.*;
 import com.company.archon.exception.EntityNotFoundException;
 import com.company.archon.mapper.AnswerParameterMapper;
@@ -19,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +60,7 @@ public class AnswerParameterServiceImpl implements AnswerParameterService {
                 .orElseThrow(()->new EntityNotFoundException("Answer with id " + answerId + " not found"));
 
         Page<AnswerParameter> result = answerParameterRepository.findAllByAnswer(answer, PagesUtility.createPageableUnsorted(page, pageSize));
+        result.getContent().sort(Comparator.comparingLong(BaseEntity::getId));
         return PageDto.of(result.getTotalElements(), page, mapToDto(result.getContent()));
     }
 
@@ -67,6 +70,7 @@ public class AnswerParameterServiceImpl implements AnswerParameterService {
                 .orElseThrow(()->new EntityNotFoundException("Answer with id " + answerId + " not found"));
         return answerUserParameterRepository.findAllByAnswer(answer).stream()
                 .map(AnswerUserParameterMapper.INSTANCE::mapToDto)
+                .sorted(Comparator.comparing(BaseDto::getId))
                 .collect(Collectors.toList());
     }
 
