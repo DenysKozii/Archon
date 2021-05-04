@@ -22,7 +22,7 @@ public class GamePatternController {
         GamePatternDto gamePatternDto = gamePatternService.createGamePattern(title);
         PageDto<GamePatternDto> games = gamePatternService.getGamePatterns(0, 150);
         model.addAttribute("games", games.getObjects());
-        return "redirect:/conditionParameter/list/start/" + gamePatternDto.getId();
+        return "redirect:/conditionParameter/list/" + gamePatternDto.getId();
     }
 
     @GetMapping("/list")

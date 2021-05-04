@@ -7,7 +7,7 @@
     <h3>Start condition parameters</h3>
     <br>
     <div class="d-flex flex-row my-3 mx-3">
-        <a th:href="@{/conditionParameter/list/finish/{id}(id = ${gamePatternId})}" class="btn btn-primary">
+        <a th:href="@{/parameter/list/{id}(id = ${gamePatternId})}" class="btn btn-primary">
             <span>Next</span>
         </a>
     </div>
@@ -22,13 +22,13 @@
         </thead>
         <tbody>
         <tr th:each="qv,iter : ${parameters}">
-            <form method="post" th:action="@{/conditionParameter/update/start/{gamePatternId}/{parameterId}
+            <form method="post" th:action="@{/conditionParameter/update/{gamePatternId}/{parameterId}
             (gamePatternId = ${gamePatternId}, parameterId = ${qv.getId()})}">
                 <td th:text="${iter.index} + 1"></td>
                 <td th:text="${qv.getTitle()}"></td>
                 <td>
                     <div class="form-group">
-                        <input type="number" class="form-control" th:placeholder="${qv.getValueStart()}"
+                        <input type="number" class="form-control" th:placeholder="${qv.getValue()}"
                                name="valueStart"/>
                     </div>
                 </td>
