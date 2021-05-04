@@ -29,6 +29,17 @@ public class QuestionController {
     public String newQuestion(@PathVariable Long gamePatternId, Model model) {
         QuestionDto question = questionService.createNewQuestion(gamePatternId);
         model.addAttribute("gamePatternId",gamePatternId);
+        model.addAttribute("question",question);
+        model.addAttribute("id", question.getId());
+        return "questionCreator";
+    }
+
+    @GetMapping("/{gamePatternId}/{questionId}")
+    public String newQuestion(@PathVariable Long gamePatternId,
+                              @PathVariable Long questionId, Model model) {
+        QuestionDto question = questionService.getById(questionId);
+        model.addAttribute("gamePatternId", gamePatternId);
+        model.addAttribute("question",question);
         model.addAttribute("id", question.getId());
         return "questionCreator";
     }
@@ -40,12 +51,12 @@ public class QuestionController {
         return "redirect:/question/list/" + gamePatternId;
     }
 
-    @PostMapping("/new/{gamePatternId}/{questionId}")
-    public String newQuestion(@PathVariable Long gamePatternId,
+    @PostMapping("/update/{gamePatternId}/{questionId}")
+    public String updateQuestion(@PathVariable Long gamePatternId,
                               @PathVariable Long questionId,
-                              @RequestParam String title,
-                              @RequestParam String context,
-                              @RequestParam Integer weight,
+                              @RequestParam(required = false) String title,
+                              @RequestParam(required = false) String context,
+                              @RequestParam(required = false) Integer weight,
                               @RequestParam GameStatus status,
                               @RequestParam(value = "fileImage", required = false) MultipartFile multipartFile,
                               Model model) throws IOException {
@@ -54,9 +65,7 @@ public class QuestionController {
                 context,
                 weight,
                 status,
-                null);
-//        PageDto<QuestionParameterDto> questionParameters = questionParameterService.getParametersByQuestionId(questionId,0,150);
-//        List<QuestionUserParameterDto> userParameters = questionParameterService.getUserParametersByQuestionId(questionId);
+                multipartFile);
         model.addAttribute("questionId", questionId);
         model.addAttribute("gamePatternId", gamePatternId);
         model.addAttribute("userParameters", questionDto.getQuestionUserParameters());

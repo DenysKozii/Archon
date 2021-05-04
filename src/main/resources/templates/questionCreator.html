@@ -7,25 +7,25 @@
     <br>
     <div class="py-5 text-center">
         <div class="col-5 mx-auto">
-            <form th:action="@{/question/new/{gamePatternId}/{questionId}(gamePatternId = ${gamePatternId}, questionId = ${id})}" class="needs-validation" method="post">
+            <form th:action="@{/question/new/{gamePatternId}/{questionId}(gamePatternId = ${gamePatternId}, questionId = ${id})}" class="needs-validation" method="post" enctype="multipart/form-data">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="title"
-                           name="title" required=""/>
+                    <input type="text" class="form-control" th:placeholder="${question.getTitle()}"
+                           name="title"/>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="context"
-                           name="context" required=""/>
+                    <input type="text" class="form-control" th:placeholder="${question.getContext()}"
+                           name="context"/>
                 </div>
                 <div class="form-group">
-                    <input type="number" class="form-control" placeholder="weight"
-                           name="weight" required=""/>
+                    <input type="number" class="form-control" th:placeholder="${question.getWeight()}"
+                           name="weight"/>
                 </div>
                 <div class="form-group">
                     <div class="custom-file">
                         <label class="custom-file-label" for="fileImage">Choose file</label>
                         <input type="file" class="custom-file-input" id="fileImage"
                                name="fileImage"
-                               accept="image/png, image/jpeg, image/jpg"
+                               accept="image/jpeg"
                                aria-describedby="inputGroupFileAddon01">
                     </div>
                 </div>

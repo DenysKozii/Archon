@@ -24,9 +24,9 @@ public class Question extends BaseEntity{
     private GameStatus status = GameStatus.RUNNING;
 
     private Boolean gameOverCondition;
-    @ManyToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
+
+    @Column(length = 100000)
+    private String image;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

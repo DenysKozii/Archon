@@ -19,6 +19,7 @@
             <th scope="col">#</th>
             <th scope="col">Title</th>
             <th scope="col">Context</th>
+            <th scope="col">Update</th>
             <th scope="col">Delete</th>
         </tr>
         </thead>
@@ -27,6 +28,12 @@
             <td th:text="${iter.index} + 1"></td>
             <td th:text="${qv.getTitle()}"></td>
             <td th:text="${qv.getContext()}"></td>
+            <td>
+                <form th:action="@{/question/{gamePatternId}/{questionId}
+                    (questionId = ${qv.getId()}, gamePatternId = ${gamePatternId})}" method="get">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </td>
             <td>
                 <form th:action="@{/question/delete/{gamePatternId}/{questionId}(gamePatternId = ${gamePatternId}, questionId = ${qv.getId()})}" method="post">
                     <button type="submit" class="btn btn-primary">Delete</button>

@@ -4,7 +4,6 @@ import com.company.archon.enums.GameStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.company.archon.entity.Image;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,7 +25,7 @@ public class QuestionDto extends BaseDto {
 
     private GameStatus status;
 
-    private Image image;
+    private String image;
 
     private Integer weight;
 

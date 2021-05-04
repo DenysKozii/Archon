@@ -16,12 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,6 +94,9 @@ public class QuestionServiceImpl implements QuestionService {
     private Question createNewQuestionParameters(GamePattern gamePattern) {
         Question question = new Question();
         question.setGamePattern(gamePattern);
+        question.setTitle("title");
+        question.setContext("context");
+        question.setWeight(1);
         for (Parameter parameter : gamePattern.getParameters()) {
             QuestionParameter questionParameter = new QuestionParameter();
             questionParameter.setTitle(parameter.getTitle());
@@ -165,6 +167,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public QuestionDto getById(Long questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
+        return QuestionMapper.INSTANCE.mapToDto(question);
+    }
+
+    @Override
     public QuestionDto updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, GameStatus status, MultipartFile multipartFile) throws IOException {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
@@ -172,13 +181,10 @@ public class QuestionServiceImpl implements QuestionService {
         question.setContext(context);
         question.setWeight(weight);
         question.setStatus(status);
-//        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-//        if (!fileName.isEmpty()){
-//            question.setImage(String.format("/uploads/%s", fileName));
-//            String uploadDir = request.getServletContext().getRealPath("/uploads");
-//            Files.createDirectories(Paths.get(uploadDir));
-//            multipartFile.transferTo(new File(String.format("%s/%s",uploadDir, fileName)));
-//        }
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+        if (!fileName.isEmpty()){
+            question.setImage(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
+        }
         questionRepository.save(question);
         return QuestionMapper.INSTANCE.mapToDto(question);
     }

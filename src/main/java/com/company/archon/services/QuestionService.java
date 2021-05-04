@@ -15,14 +15,13 @@ public interface QuestionService {
 
     boolean deleteById(Long questionId);
 
-//    QuestionDto createNewQuestion(Long gamePatternId, String title, String context, Integer weight, MultipartFile multipartFile) throws IOException;
+    QuestionDto getById(Long questionId);
 
     PageDto<QuestionDto> getRelativeQuestions(Long questionId, int page, int pageSize);
 
     QuestionDto createNewQuestion(Long gamePatternId);
 
     QuestionDto updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, GameStatus status, MultipartFile multipartFile) throws IOException;
-
 
     PageDto<QuestionDto> getRelativeQuestionsByGamePatternId(Long gamePatternId, Long questionId, int page, int pageSize);
 }
