@@ -15,5 +15,5 @@ public interface QuestionParameterService {
 
     List<QuestionUserParameterDto> getUserParametersByQuestionId(Long questionId);
 
-    void updateUserParameter(Long parameterId, Integer appear, Integer disappear);
+    void updateUserParameter(Long parameterId, Integer appear);
 }

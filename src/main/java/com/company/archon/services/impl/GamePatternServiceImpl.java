@@ -52,6 +52,11 @@ public class GamePatternServiceImpl implements GamePatternService {
     }
 
     private void fillConditionParameters(GamePattern gamePattern) {
+        ConditionParameter parameter0 = new ConditionParameter();
+        parameter0.setTitle("souls");
+        parameter0.setValue(1);
+        parameter0.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter0);
 //        ConditionParameter parameter0 = new ConditionParameter();
 //        parameter0.setTitle("Осколки душ");
 //        parameter0.setValueStart(0);
@@ -150,12 +155,12 @@ public class GamePatternServiceImpl implements GamePatternService {
 //        parameter13.setGamePattern(gamePattern);
 //        conditionParameterRepository.save(parameter13);
 
-        ConditionParameter parameter14 = new ConditionParameter();
-        parameter14.setTitle("ASD");
-        parameter14.setValueStart(0);
-        parameter14.setValueFinish(0);
-        parameter14.setGamePattern(gamePattern);
-        conditionParameterRepository.save(parameter14);
+//        ConditionParameter parameter14 = new ConditionParameter();
+//        parameter14.setTitle("ASD");
+//        parameter14.setValueStart(0);
+//        parameter14.setValueFinish(0);
+//        parameter14.setGamePattern(gamePattern);
+//        conditionParameterRepository.save(parameter14);
     }
 
     @Override
@@ -192,8 +197,8 @@ public class GamePatternServiceImpl implements GamePatternService {
         for (ConditionParameter conditionParameter : gamePattern.getConditionParameters()) {
             for (UserParameter userParameter: user.getUserParameters()) {
                 if (conditionParameter.getTitle().equals(userParameter.getTitle())
-                        && conditionParameter.getValueStart() > 0
-                        && !(conditionParameter.getValueStart().equals(userParameter.getValue())))
+                        && conditionParameter.getValue() > 0
+                        && !(conditionParameter.getValue().equals(userParameter.getValue())))
                     return false;
             }
         }

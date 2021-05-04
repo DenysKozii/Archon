@@ -115,7 +115,6 @@ public class QuestionServiceImpl implements QuestionService {
             QuestionUserParameter questionParameter = new QuestionUserParameter();
             questionParameter.setTitle(parameter.getTitle());
             questionParameter.setValueAppear(0);
-            questionParameter.setValueDisappear(parameter.getValue());
             questionParameter.setQuestion(question);
             questionUserParameterRepository.save(questionParameter);
             question.getQuestionUserParameters().add(questionParameter);

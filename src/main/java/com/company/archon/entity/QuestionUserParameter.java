@@ -16,8 +16,6 @@ public class QuestionUserParameter extends BaseEntity {
 
     private Integer valueAppear;
 
-    private Integer valueDisappear;
-
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.EAGER)

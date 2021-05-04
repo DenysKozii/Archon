@@ -11,5 +11,4 @@ public interface ConditionParameterService {
 
     void updateStart(Integer valueStart, Long parameterId);
 
-    void updateFinish(Integer valueFinish, Long parameterId);
 }

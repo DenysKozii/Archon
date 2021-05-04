@@ -20,6 +20,4 @@ public class QuestionUserParameterDto extends BaseDto {
 
     private Integer valueAppear;
 
-    private Integer valueDisappear;
-
 }

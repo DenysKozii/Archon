@@ -124,10 +124,8 @@ public class GameServiceImpl implements GameService {
                         .noneMatch(parameter ->
                                 parameter.getValueAppear() > userParameterRepository
                                         .findByTitleAndUser(parameter.getTitle(), user)
-                                        .orElseThrow(() -> new EntityNotFoundException("UserParameter with title " + parameter.getTitle() + " not found")).getValue()
-                                        || parameter.getValueDisappear() < userParameterRepository
-                                        .findByTitleAndUser(parameter.getTitle(), user)
-                                        .orElseThrow(() -> new EntityNotFoundException("UserParameter with title " + parameter.getTitle() + " not found")).getValue()))
+                                        .orElseThrow(() -> new EntityNotFoundException("UserParameter with title " + parameter.getTitle() + " not found"))
+                                        .getValue()))
                 .filter(o -> checkQuestions(game, o))
                 .collect(Collectors.toList());
     }

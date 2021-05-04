@@ -16,9 +16,7 @@ public class ConditionParameter extends BaseEntity{
 
     private String title;
 
-    private Integer valueStart;
-
-    private Integer valueFinish;
+    private Integer value;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

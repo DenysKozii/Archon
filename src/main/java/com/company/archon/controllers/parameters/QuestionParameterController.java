@@ -39,9 +39,8 @@ public class QuestionParameterController {
     public String updateUserParameter(@PathVariable Long gamePatternId,
                          @PathVariable Long questionId,
                          @PathVariable Long parameterId,
-                         @RequestParam Integer appear,
-                         @RequestParam Integer disappear, Model model) {
-        questionParameterService.updateUserParameter(parameterId, appear, disappear);
+                         @RequestParam Integer appear, Model model) {
+        questionParameterService.updateUserParameter(parameterId, appear);
         PageDto<QuestionParameterDto> questionParameters = questionParameterService.getParametersByQuestionId(questionId,0,150);
         List<QuestionUserParameterDto> questionUserParameters = questionParameterService.getUserParametersByQuestionId(questionId);
         model.addAttribute("gamePatternId", gamePatternId);

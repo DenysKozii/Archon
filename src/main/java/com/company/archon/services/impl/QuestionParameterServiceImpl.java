@@ -69,13 +69,11 @@ public class QuestionParameterServiceImpl implements QuestionParameterService {
     }
 
     @Override
-    public void updateUserParameter(Long parameterId, Integer appear, Integer disappear) {
+    public void updateUserParameter(Long parameterId, Integer appear) {
         QuestionUserParameter questionParameter = questionUserParameterRepository.findById(parameterId)
                 .orElseThrow(() -> new EntityNotFoundException("QuestionUserParameter with id " + parameterId + " not found"));
         if (appear != null)
             questionParameter.setValueAppear(appear);
-        if (disappear != null)
-            questionParameter.setValueDisappear(disappear);
         questionUserParameterRepository.save(questionParameter);
     }
 }
