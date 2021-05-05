@@ -61,6 +61,7 @@ public class AnswerServiceImpl implements AnswerService {
         Answer answer = new Answer();
         answer.setQuestion(question);
         answer.setContext(context);
+        answer.setCounter(0);
         List<QuestionParameter> parameters = questionParameterRepository.findAllByQuestion(question);
         for (QuestionParameter parameter: parameters) {
             AnswerParameter answerParameter = new AnswerParameter();
