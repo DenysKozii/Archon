@@ -36,11 +36,9 @@ public class Question extends BaseEntity{
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "question_conditions",
-            joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "condition_id", referencedColumnName = "id"))
-    private List<Question> questionConditions = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "relative_id", referencedColumnName = "id")
+    private Question relativeQuestion;
 
     @Transient
     @ToString.Exclude

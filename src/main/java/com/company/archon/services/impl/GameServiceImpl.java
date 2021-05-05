@@ -61,20 +61,20 @@ public class GameServiceImpl implements GameService {
         createParameters(game, gamePattern);
         game.setUser(user);
         gameRepository.save(game);
-        game.setQuestionsPull(changeQuestions(game));
-        gameRepository.save(game);
+//        game.setQuestionsPull(changeQuestions(game, null));
+//        gameRepository.save(game);
 
-        return mapToDto(game);
+        return mapToDto(game, null);
     }
 
-    private GameDto mapToDto(Game game) {
+    private GameDto mapToDto(Game game, Answer answer) {
         GameDto gameDto = new GameDto();
         gameDto.setId(game.getId());
         gameDto.setGameStatus(game.getGameStatus());
         gameDto.setGamePatternId(game.getGamePattern().getId());
         gameDto.setGameStatus(game.getGameStatus());
 
-        QuestionDto question = nextQuestion(game);
+        QuestionDto question = nextQuestion(game, answer);
         gameDto.setQuestion(question);
 
         if (question != null) {
@@ -128,7 +128,7 @@ public class GameServiceImpl implements GameService {
                                         .findByTitleAndUser(parameter.getTitle(), user)
                                         .orElseThrow(() -> new EntityNotFoundException("UserParameter with title " + parameter.getTitle() + " not found"))
                                         .getValue()))
-                .filter(o -> checkQuestions(game, o))
+//                .filter(o -> checkQuestions(game, o))
                 .peek(question -> createQuestionCounter(question, user))
                 .collect(Collectors.toList());
     }
@@ -144,25 +144,27 @@ public class GameServiceImpl implements GameService {
         }
     }
 
-    private boolean checkQuestions(Game game, Question question) {
-        return game.getQuestionsPull().containsAll(question.getQuestionConditions());
-    }
+//    private boolean checkQuestions(Game game, Question question) {
+//        return game.getQuestionsPull().containsAll(question.getQuestionConditions());
+//    }
 
-    @Override
-    public QuestionDto nextQuestion(Game game) {
+    private QuestionDto nextQuestion(Game game, Answer answer) {
         List<Question> questions = changeQuestions(game);
         game.setQuestionsPull(questions);
         gameRepository.save(game);
         if (questions.size() == 0)
             return null;
-        Question question = randomQuestion(questions);
+        Question question = randomQuestion(questions, answer);
         return QuestionMapper.INSTANCE.mapToDto(question);
     }
 
-    private Question randomQuestion(List<Question> questions) {
+    private Question randomQuestion(List<Question> questions, Answer answer) {
         String username = authorizationService.getProfileOfCurrent().getUsername();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+
+        if (answer != null && answer.getQuestion().getRelativeQuestion() != null)
+            return answer.getQuestion().getRelativeQuestion();
 
         List<Question> questionPull = new ArrayList<>();
         for (Question question : questions) {
@@ -199,6 +201,24 @@ public class GameServiceImpl implements GameService {
         return questions.get(0);
     }
 
+//    private List<Question> fillQuestionsPull(List<Question> questions, User u){
+//        for (Question question : questions) {
+//            if (GameStatus.GAME_OVER.equals(question.getStatus())
+//                    || GameStatus.COMPLETED.equals(question.getStatus())) {
+//                return question;
+//            }
+//            QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUser(question, user)
+//                    .orElseThrow(() -> new UsernameNotFoundException("QuestionCounter with user " + user.getUsername() + " doesn't exists!"));
+//            if (questionCounter.getTime() > Integer.min(5, questions.size())) {
+//                questionCounter.setTime(0);
+//                questionCounterRepository.save(questionCounter);
+//            }
+//            if (questionCounter.getTime() == 0) {
+//                questionPull.add(question);
+//            }
+//        }
+//    }
+
     @Override
     public GameDto answerInfluence(Long answerId, Long gameId) {
         Game game = gameRepository.findById(gameId)
@@ -229,11 +249,7 @@ public class GameServiceImpl implements GameService {
                                 .getValue())));
 
         gameRepository.save(game);
-        game.setQuestionsPull(changeQuestions(game));
-        gameRepository.save(game);
-
-        return mapToDto(game);
-
+        return mapToDto(game, answer);
     }
 
     @Override

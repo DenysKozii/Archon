@@ -11,7 +11,7 @@ public interface QuestionService {
 
     PageDto<QuestionDto> getQuestionsByGamePatternId(Long gamePatternId, int page, int pageSize);
 
-    PageDto<QuestionDto> addRelativeQuestion(Long questionId, Long relativeId, int page, int pageSize);
+    PageDto<QuestionDto> addRelativeQuestion(Long relativeId, Long questionId, int page, int pageSize);
 
     boolean deleteById(Long questionId);
 

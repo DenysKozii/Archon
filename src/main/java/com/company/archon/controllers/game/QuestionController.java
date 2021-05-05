@@ -28,8 +28,8 @@ public class QuestionController {
     @GetMapping("/new/{gamePatternId}")
     public String newQuestion(@PathVariable Long gamePatternId, Model model) {
         QuestionDto question = questionService.createNewQuestion(gamePatternId);
-        model.addAttribute("gamePatternId",gamePatternId);
-        model.addAttribute("question",question);
+        model.addAttribute("gamePatternId", gamePatternId);
+        model.addAttribute("question", question);
         model.addAttribute("id", question.getId());
         return "questionCreator";
     }
@@ -39,7 +39,7 @@ public class QuestionController {
                               @PathVariable Long questionId, Model model) {
         QuestionDto question = questionService.getById(questionId);
         model.addAttribute("gamePatternId", gamePatternId);
-        model.addAttribute("question",question);
+        model.addAttribute("question", question);
         model.addAttribute("id", question.getId());
         return "questionCreator";
     }
@@ -53,13 +53,13 @@ public class QuestionController {
 
     @PostMapping("/update/{gamePatternId}/{questionId}")
     public String updateQuestion(@PathVariable Long gamePatternId,
-                              @PathVariable Long questionId,
-                              @RequestParam(required = false) String title,
-                              @RequestParam(required = false) String context,
-                              @RequestParam(required = false) Integer weight,
-                              @RequestParam GameStatus status,
-                              @RequestParam(value = "fileImage", required = false) MultipartFile multipartFile,
-                              Model model) throws IOException {
+                                 @PathVariable Long questionId,
+                                 @RequestParam(required = false) String title,
+                                 @RequestParam(required = false) String context,
+                                 @RequestParam(required = false) Integer weight,
+                                 @RequestParam GameStatus status,
+                                 @RequestParam(value = "fileImage", required = false) MultipartFile multipartFile,
+                                 Model model) throws IOException {
         QuestionDto questionDto = questionService.updateQuestion(gamePatternId, questionId,
                 title,
                 context,
@@ -77,23 +77,26 @@ public class QuestionController {
     public String questionsList(@PathVariable Long gamePatternId, Model model) {
         PageDto<QuestionDto> questions = questionService.getQuestionsByGamePatternId(gamePatternId, 0, 150);
         model.addAttribute("questions", questions.getObjects());
-        model.addAttribute("gamePatternId",gamePatternId);
+        model.addAttribute("gamePatternId", gamePatternId);
         return "questionsList";
     }
 
     @GetMapping("/relativeQuestions/{gamePatternId}/{questionId}")
-    public String relativeQuestionsList(@PathVariable Long gamePatternId,@PathVariable Long questionId, Model model) {
-        PageDto<QuestionDto> questions = questionService.getRelativeQuestionsByGamePatternId(gamePatternId,questionId,0, 150);
+    public String relativeQuestionsList(@PathVariable Long gamePatternId,
+                                        @PathVariable Long questionId, Model model) {
+        PageDto<QuestionDto> questions = questionService.getRelativeQuestionsByGamePatternId(gamePatternId, questionId, 0, 150);
         model.addAttribute("questions", questions.getObjects());
-        model.addAttribute("gamePatternId",gamePatternId);
+        model.addAttribute("gamePatternId", gamePatternId);
         return "relativeQuestionsList";
     }
 
-    @GetMapping("/addRelativeQuestion/{gamePatternId}/{questionId}/{relativeId}")
-    public String addRelativeQuestion(@PathVariable Long questionId,@PathVariable Long relativeId, @PathVariable Long gamePatternId, @AuthenticationPrincipal User user, Model model) {
-        PageDto<QuestionDto> questions = questionService.addRelativeQuestion(questionId, relativeId,0,150);
+    @GetMapping("/addRelativeQuestion/{gamePatternId}/{relativeId}/{questionId}")
+    public String addRelativeQuestion(@PathVariable Long questionId,
+                                      @PathVariable Long relativeId,
+                                      @PathVariable Long gamePatternId, Model model) {
+        PageDto<QuestionDto> questions = questionService.addRelativeQuestion(relativeId, questionId, 0, 150);
         model.addAttribute("questions", questions.getObjects());
-        model.addAttribute("gamePatternId",gamePatternId);
+        model.addAttribute("gamePatternId", gamePatternId);
         return "relativeQuestionsList";
     }
 }

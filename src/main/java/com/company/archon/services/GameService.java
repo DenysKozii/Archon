@@ -8,8 +8,6 @@ import com.company.archon.pagination.PageDto;
 
 public interface GameService {
 
-    QuestionDto nextQuestion(Game game);
-
     GameDto startNewGame(Long gamePatternId);
 
     GameDto answerInfluence(Long answerId, Long gameId);

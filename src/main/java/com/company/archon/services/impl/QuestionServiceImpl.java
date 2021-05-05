@@ -54,21 +54,19 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public PageDto<QuestionDto> addRelativeQuestion(Long questionId, Long relativeId, int page, int pageSize) {
+    public PageDto<QuestionDto> addRelativeQuestion(Long relativeId, Long questionId, int page, int pageSize) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
         Question relativeQuestion = questionRepository.findById(relativeId)
                 .orElseThrow(() -> new EntityNotFoundException("Question with id " + relativeId + " not found"));
 
-        question.getQuestionConditions().add(relativeQuestion);
+        question.setRelativeQuestion(relativeQuestion);
         questionRepository.save(question);
-
-        Set<Question> relativeQuestions = new HashSet<>(question.getQuestionConditions());
-        relativeQuestions.add(question);
 
         Page<Question> questions = questionRepository.findAllByGamePatternId(question.getGamePattern().getId(), PagesUtility.createPageableUnsorted(page, pageSize));
         List<Question> result = questions.getContent().stream()
-                .filter(o -> !relativeQuestions.contains(o))
+                .filter(o -> !relativeQuestion.equals(o.getRelativeQuestion()))
+                .filter(o -> !relativeQuestion.equals(o))
                 .collect(Collectors.toList());
 
         return PageDto.of(result.size(), page, mapToDto(result));
@@ -142,6 +140,7 @@ public class QuestionServiceImpl implements QuestionService {
         ).forEach(answerRepository::delete);
         question.getQuestionParameters().forEach(questionParameterRepository::delete);
         question.setGamePattern(null);
+        questionRepository.save(question);
         questionRepository.delete(question);
         return true;
     }
