@@ -35,4 +35,12 @@ public class ConditionParameterController {
         return "conditionsStartList";
     }
 
+    @GetMapping("/info/{gamePatternId}")
+    public String conditionParametersInfoList(@PathVariable Long gamePatternId, Model model) {
+        List<ConditionParameterDto> parameters = conditionParameterService.getParametersByGamePatternId(gamePatternId);
+        model.addAttribute("parameters", parameters);
+        model.addAttribute("gamePatternId", gamePatternId);
+        return "conditionsInfoList";
+    }
+
 }

@@ -26,8 +26,8 @@
             <th scope="col">Title</th>
             <th scope="col">Questions</th>
             <th scope="col">Start new game</th>
+            <th scope="col">Info</th>
             <th scope="col">Delete</th>
-
         </tr>
         </thead>
         <tbody>
@@ -45,6 +45,11 @@
                         <span>Start</span>
                     </a>
                 </div>
+            </td>
+            <td>
+                <a th:href="@{/conditionParameter/info/{id}(id = ${qv.getId()})}" class="btn btn-primary">
+                    <span>Info</span>
+                </a>
             </td>
             <td>
                 <form th:action="@{/gamePattern/delete/{id}(id = ${qv.getId()})}" method="post">
