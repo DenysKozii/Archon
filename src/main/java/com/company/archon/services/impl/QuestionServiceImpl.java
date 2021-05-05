@@ -48,7 +48,7 @@ public class QuestionServiceImpl implements QuestionService {
     public PageDto<QuestionDto> getRelativeQuestionsByGamePatternId(Long gamePatternId, Long questionId, int page, int pageSize) {
         Page<Question> result = questionRepository.findAllByGamePatternId(gamePatternId, PagesUtility.createPageableUnsorted(page, pageSize));
         List<Question> questions = result.getContent().stream()
-                .filter(o-> !o.getId().equals(questionId))
+                .filter(o -> !o.getId().equals(questionId))
                 .collect(Collectors.toList());
         return PageDto.of(result.getTotalElements(), page, mapToDto(questions));
     }
@@ -177,13 +177,18 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionDto updateQuestion(Long gamePatternId, Long questionId, String title, String context, Integer weight, GameStatus status, MultipartFile multipartFile) throws IOException {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
-        question.setTitle(title);
-        question.setContext(context);
-        question.setWeight(weight);
+        if (!title.isEmpty())
+            question.setTitle(title);
+        if (!context.isEmpty())
+            question.setContext(context);
+        if (Objects.nonNull(weight))
+            question.setWeight(weight);
         question.setStatus(status);
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-        if (!fileName.isEmpty()){
-            question.setImage(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
+        if (!multipartFile.isEmpty()) {
+            String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+            if (!fileName.isEmpty()) {
+                question.setImage(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
+            }
         }
         questionRepository.save(question);
         return QuestionMapper.INSTANCE.mapToDto(question);

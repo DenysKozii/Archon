@@ -7,7 +7,7 @@
     <br>
     <div class="py-5 text-center">
         <div class="col-5 mx-auto">
-            <form th:action="@{/question/new/{gamePatternId}/{questionId}(gamePatternId = ${gamePatternId}, questionId = ${id})}" class="needs-validation" method="post" enctype="multipart/form-data">
+            <form th:action="@{/question/update/{gamePatternId}/{questionId}(gamePatternId = ${gamePatternId}, questionId = ${id})}" class="needs-validation" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <input type="text" class="form-control" th:placeholder="${question.getTitle()}"
                            name="title"/>

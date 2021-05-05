@@ -25,7 +25,8 @@ public class Question extends BaseEntity{
 
     private Boolean gameOverCondition;
 
-    @Column(length = 100000)
+    @Lob
+    @Column(columnDefinition = "MEDIUMBLOB")
     private String image;
 
     @ToString.Exclude
