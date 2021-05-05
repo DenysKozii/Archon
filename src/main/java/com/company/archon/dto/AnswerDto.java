@@ -20,6 +20,8 @@ public class AnswerDto extends BaseDto{
 
     private String context;
 
+    private Long counter;
+
     private List<AnswerParameterDto> parameters;
 
     private List<AnswerUserParameterDto> userParameters;

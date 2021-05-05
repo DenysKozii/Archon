@@ -226,6 +226,9 @@ public class GameServiceImpl implements GameService {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("Answer with id " + answerId + " not found"));
 
+        answer.setCounter(answer.getCounter()+1);
+        answerRepository.save(answer);
+
         gameParameterRepository.findAllByGame(game)
                 .forEach(o ->
                 {
