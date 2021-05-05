@@ -2,9 +2,11 @@ package com.company.archon.services.impl;
 
 import com.company.archon.dto.AnswerDto;
 import com.company.archon.dto.GameDto;
+import com.company.archon.dto.QuestionDto;
 import com.company.archon.entity.*;
 import com.company.archon.exception.EntityNotFoundException;
 import com.company.archon.mapper.AnswerMapper;
+import com.company.archon.mapper.QuestionMapper;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.pagination.PagesUtility;
 import com.company.archon.repositories.*;
@@ -42,11 +44,11 @@ public class AnswerServiceImpl implements AnswerService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public PageDto<AnswerDto> getAnswersByQuestionId(Long questionId, int page, int pageSize) {
-        Page<Answer> result = answerRepository.findAllByQuestionId(questionId, PagesUtility.createPageableUnsorted(page, pageSize));
-        return PageDto.of(result.getTotalElements(), page, mapToDto(result.getContent()));
-    }
+//    @Override
+//    public PageDto<AnswerDto> getAnswersByQuestionId(Long questionId, int page, int pageSize) {
+//        Page<Answer> result = answerRepository.findAllByQuestionId(questionId, PagesUtility.createPageableUnsorted(page, pageSize));
+//        return PageDto.of(result.getTotalElements(), page, mapToDto(result.getContent()));
+//    }
 
     private List<AnswerDto> mapToDto(List<Answer> answers) {
         return answers.stream()
@@ -90,33 +92,28 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public GameDto answerInfluence(Long answerId, GameDto gameDto, GameDto gameDtoSecond) {
-//        Answer answer = answerRepository.findById(answerId)
-//                .orElseThrow(() -> new EntityNotFoundException("Answer with id " + answerId + " not found"));
-//        Game game = gameRepository.findById(gameDto.getId())
-//                .orElseThrow(() -> new EntityNotFoundException("Game with id " + gameDto.getId() + " not found"));
-//        List<GameParameter> gameParameters = gameParameterRepository.findAllByGame(game);
-//        gameParameters
-//                .forEach(o->o.setValue(Integer.min(o.getParameter().getHighestValue(),
-//                        o.getValue()+answerParameterRepository
-//                                .findByTitleAndAnswer(o.getParameter().getTitle(), answer)
-//                                .orElseThrow(() -> new EntityNotFoundException("AnswerParameter with title " + o.getParameter().getTitle() + " not found"))
-//                                .getValue())));
-//        gameRepository.save(game);
-//        game = gameRepository.findById(gameDtoSecond.getId())
-//                .orElseThrow(() -> new EntityNotFoundException("Game with id " + gameDtoSecond.getId() + " not found"));
-//
-//        gameParameters = gameParameterRepository.findAllByGame(game);
-//        gameParameters
-//                .forEach(o->o.setValue(Integer.min(o.getParameter().getHighestValue(),
-//                        o.getValue()+answerParameterRepository
-//                                .findByTitleAndAnswer(o.getParameter().getTitle(), answer)
-//                                .orElseThrow(() -> new EntityNotFoundException("AnswerParameter with title " + o.getParameter().getTitle() + " not found"))
-//                                .getValue())));
-//        gameRepository.save(game);
-//
-//        return gameOverConditionCheck(game);
-        return null;
+    public List<AnswerDto> getAll() {
+        List<Answer> answers = answerRepository.findAll();
+        return answers.stream()
+                .map(AnswerMapper.INSTANCE::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<QuestionDto> getQuestionsByAnswers() {
+        List<Answer> answers = answerRepository.findAll();
+        return answers.stream()
+                .map(Answer::getQuestion)
+                .map(QuestionMapper.INSTANCE::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateCounter(Long answerId, Integer counter) {
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new EntityNotFoundException("Answer with id " + answerId + " doesn't exists!"));
+        answer.setCounter(counter);
+        answerRepository.save(answer);
     }
 
 

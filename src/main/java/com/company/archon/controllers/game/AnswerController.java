@@ -1,6 +1,7 @@
 package com.company.archon.controllers.game;
 
 import com.company.archon.dto.*;
+import com.company.archon.entity.Question;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.services.AnswerService;
 import com.company.archon.services.ParameterService;
@@ -40,6 +41,19 @@ public class AnswerController {
     public String deleteAnswer(@PathVariable Long answerId, @PathVariable Long gamePatternId, @PathVariable Long questionId, Model model) {
         answerService.deleteById(answerId);
         return newAnswerModel(gamePatternId,questionId,model);
+    }
+
+    @GetMapping("/statistics")
+    public String getStatistics(Model model) {
+        List<AnswerDto> answers = answerService.getAll();
+        model.addAttribute("answers", answers);
+        return "answerStatistics";
+    }
+
+    @PostMapping("/statistics/update/{answerId}")
+    public String getStatistics(@PathVariable Long answerId, @RequestParam Integer counter,Model model) {
+        answerService.updateCounter(answerId, counter);
+        return "redirect:/answer/statistics";
     }
 
     private String newAnswerModel(Long gamePatternId, Long questionId, Model model) {

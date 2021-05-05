@@ -22,6 +22,8 @@ public class AnswerDto extends BaseDto{
 
     private Long counter;
 
+    private QuestionDto question;
+
     private List<AnswerParameterDto> parameters;
 
     private List<AnswerUserParameterDto> userParameters;
