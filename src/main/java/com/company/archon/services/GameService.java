@@ -8,12 +8,6 @@ import com.company.archon.pagination.PageDto;
 
 public interface GameService {
 
-    boolean saveGame(Long gameId);
-
-    PageDto<GameDto> savedGames(int page, int pageSize);
-
-    GameDto loadGame(Long gameId);
-
     QuestionDto nextQuestion(Game game);
 
     GameDto startNewGame(Long gamePatternId);
@@ -21,5 +15,4 @@ public interface GameService {
     GameDto answerInfluence(Long answerId, Long gameId);
 
     boolean deleteById(Long gameId);
-
 }

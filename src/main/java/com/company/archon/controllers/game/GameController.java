@@ -44,23 +44,9 @@ public class GameController {
         return "game";
     }
 
-    @GetMapping("/save/{gameId}")
+    @GetMapping("/finish/{gameId}")
     public String saveGame(@PathVariable Long gameId) {
-        gameService.saveGame(gameId);
+        gameService.deleteById(gameId);
         return "redirect:/gamePattern/list";
-    }
-
-    @GetMapping("/saved")
-    public String savedGames(Model model) {
-        PageDto<GameDto> savedGames = gameService.savedGames(0, 150);
-        model.addAttribute("games", savedGames.getObjects());
-        return "saves";
-    }
-
-    @GetMapping("/load/{gameId}")
-    public String loadGame(@PathVariable Long gameId, Model model) {
-        GameDto game = gameService.loadGame(gameId);
-        model.addAttribute("game", game);
-        return "game";
     }
 }

@@ -23,11 +23,16 @@ public class Question extends BaseEntity{
 
     private GameStatus status = GameStatus.RUNNING;
 
-    private Boolean gameOverCondition;
-
     @Lob
     @Column(columnDefinition = "MEDIUMBLOB")
     private String image;
+
+    @Transient
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
+    private List<QuestionCounter> questionCounters = new ArrayList<>();
+
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

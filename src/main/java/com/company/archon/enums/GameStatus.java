@@ -3,8 +3,7 @@ package com.company.archon.enums;
 public enum GameStatus {
     RUNNING("running"),
     GAME_OVER("game over"),
-    COMPLETED("completed"),
-    PAUSED;
+    COMPLETED("completed");
 
     public final String value;
 
@@ -12,7 +11,4 @@ public enum GameStatus {
         this.value = value;
     }
 
-    GameStatus(){
-        value = null;
-    }
 }

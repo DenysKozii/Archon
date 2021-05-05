@@ -25,7 +25,6 @@
             <th scope="col">#</th>
             <th scope="col">Title</th>
             <th scope="col">Questions</th>
-            <th scope="col">Saves</th>
             <th scope="col">Start new game</th>
             <th scope="col">Delete</th>
 
@@ -38,11 +37,6 @@
             <td>
                 <a th:href="@{/question/list/{id}(id = ${qv.getId()})}" class="btn btn-primary">
                     <span>Questions</span>
-                </a>
-            </td>
-            <td>
-                <a th:href="@{/game/saved}" class="btn btn-primary">
-                    <span>Saves</span>
                 </a>
             </td>
             <td>

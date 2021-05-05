@@ -31,7 +31,7 @@
                 </div>
                 <select name="status">
                     <option th:each="statusOpt : ${T(com.company.archon.enums.GameStatus).values()}"
-                            th:if="${statusOpt != T(com.company.archon.enums.GameStatus).PAUSED}" th:value="${statusOpt}" th:text="${statusOpt.value}"></option>
+                            th:value="${statusOpt}" th:text="${statusOpt.value}"></option>
                 </select>
                 <p></p>
                 <button type="submit" class="btn btn-lg btn-primary btn-block">Next</button>

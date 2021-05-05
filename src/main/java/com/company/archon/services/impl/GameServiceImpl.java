@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GameServiceImpl implements GameService {
 
+    private final QuestionCounterRepository questionCounterRepository;
     private final GameRepository gameRepository;
     private final GamePatternRepository gamePatternRepository;
     private final QuestionRepository questionRepository;
@@ -127,52 +129,23 @@ public class GameServiceImpl implements GameService {
                                         .orElseThrow(() -> new EntityNotFoundException("UserParameter with title " + parameter.getTitle() + " not found"))
                                         .getValue()))
                 .filter(o -> checkQuestions(game, o))
+                .peek(question -> createQuestionCounter(question, user))
                 .collect(Collectors.toList());
+    }
+
+    private void createQuestionCounter(Question question, User user) {
+        Optional<QuestionCounter> questionCounterOptional = questionCounterRepository.findByQuestionAndUser(question, user);
+        if (!questionCounterOptional.isPresent()) {
+            QuestionCounter questionCounter = new QuestionCounter();
+            questionCounter.setQuestion(question);
+            questionCounter.setUser(user);
+            questionCounter.setTime(0);
+            questionCounterRepository.save(questionCounter);
+        }
     }
 
     private boolean checkQuestions(Game game, Question question) {
         return game.getQuestionsPull().containsAll(question.getQuestionConditions());
-    }
-
-    @Override
-    public boolean saveGame(Long gameId) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new EntityNotFoundException("Game with id " + gameId + " not found"));
-        game.setGameStatus(GameStatus.PAUSED);
-        gameRepository.save(game);
-        return true;
-    }
-
-    @Override
-    public PageDto<GameDto> savedGames(int page, int pageSize) {
-        String username = authorizationService.getProfileOfCurrent().getUsername();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
-
-        Page<Game> result = gameRepository.findByUser(user, PagesUtility.createPageableUnsorted(page, pageSize));
-        return PageDto.of(result.getTotalElements(), page, mapToDto(result.getContent()));
-    }
-
-    private List<GameDto> mapToDto(List<Game> games) {
-        List<GameDto> gameDtos = games.stream()
-                .filter(o -> GameStatus.PAUSED.equals(o.getGameStatus()))
-                .map(GameMapper.INSTANCE::mapToDto)
-                .collect(Collectors.toList());
-        for (GameDto gameDto : gameDtos) {
-            Game game = gameRepository.findById(gameDto.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Game with id " + gameDto.getId() + " not found"));
-            gameDto.setTitle(game.getGamePattern().getTitle());
-        }
-        return gameDtos;
-    }
-
-    @Override
-    public GameDto loadGame(Long gameId) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new EntityNotFoundException("Game with id " + gameId + " not found"));
-        game.setGameStatus(GameStatus.RUNNING);
-        gameRepository.save(game);
-        return GameMapper.INSTANCE.mapToDto(game);
     }
 
     @Override
@@ -187,15 +160,41 @@ public class GameServiceImpl implements GameService {
     }
 
     private Question randomQuestion(List<Question> questions) {
-        long summary = questions.stream()
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+
+        List<Question> questionPull = new ArrayList<>();
+        for (Question question : questions) {
+            if (GameStatus.GAME_OVER.equals(question.getStatus())
+                    || GameStatus.COMPLETED.equals(question.getStatus())) {
+                return question;
+            }
+            QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUser(question, user)
+                    .orElseThrow(() -> new UsernameNotFoundException("QuestionCounter with user " + user.getUsername() + " doesn't exists!"));
+            if (questionCounter.getTime() > Integer.min(5, questions.size())) {
+                questionCounter.setTime(0);
+                questionCounterRepository.save(questionCounter);
+            }
+            if (questionCounter.getTime() == 0) {
+                questionPull.add(question);
+            }
+        }
+
+        long summary = questionPull.stream()
                 .map(Question::getWeight)
                 .reduce(0, Integer::sum);
         double random = Math.random() * summary;
         long counter = 0;
         for (Question question : questions) {
             counter += question.getWeight();
-            if (counter >= random)
+            if (counter >= random) {
+                QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUser(question, user)
+                        .orElseThrow(() -> new UsernameNotFoundException("QuestionCounter with user " + user.getUsername() + " doesn't exists!"));
+                questionCounter.setTime(questionCounter.getTime() + 1);
+                questionCounterRepository.save(questionCounter);
                 return question;
+            }
         }
         return questions.get(0);
     }
@@ -233,43 +232,41 @@ public class GameServiceImpl implements GameService {
         game.setQuestionsPull(changeQuestions(game));
         gameRepository.save(game);
 
-//        return gameOverConditionCheck(game);
         return mapToDto(game);
 
     }
 
     @Override
     public boolean deleteById(Long gameId) {
+        String username = authorizationService.getProfileOfCurrent().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
+
+
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new EntityNotFoundException("Game with id " + gameId + " not found"));
         game.getParameters().stream()
                 .map(GameParameter::getId)
                 .forEach(gameParameterService::deleteById);
+
+        List<Question> questions = questionRepository.findAllByGamePatternId(game.getGamePattern().getId());
+        for (Question question: questions) {
+            QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUser(question, user)
+                    .orElseThrow(() -> new EntityNotFoundException("QuestionCounter with user " + username + " not found"));
+            questionCounter.setUser(null);
+            questionCounter.setQuestion(null);
+            questionCounterRepository.save(questionCounter);
+            questionCounterRepository.delete(questionCounter);
+        }
+
+        game.setUser(null);
         game.setGamePattern(null);
         game.setGameRequest(null);
-        game.setUser(null);
+        game.setParameters(null);
         game.setQuestionsPull(new ArrayList<>());
         gameRepository.save(game);
         gameRepository.delete(game);
         return true;
     }
-
-
-//    private boolean gameCompletedConditionCheck(Game game){
-//        String username = authorizationService.getProfileOfCurrent().getUsername();
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
-//
-//        GamePattern gamePattern = game.getGamePattern();
-//        for (ConditionParameter conditionParameter: gamePattern.getConditionParameters()) {
-//            for (UserParameter userParameter:user.getUserParameters()) {
-//                if (conditionParameter.getTitle().equals(userParameter.getTitle())
-//                        && conditionParameter.getValueFinish() > 0
-//                        && !(conditionParameter.getValueFinish().equals(userParameter.getValue())))
-//                    return false;
-//            }
-//        }
-//        return true;
-//    }
 
 }

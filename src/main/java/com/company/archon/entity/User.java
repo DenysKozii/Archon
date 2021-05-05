@@ -43,6 +43,12 @@ public class User extends BaseEntity implements UserDetails {
     @Transient
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<QuestionCounter> questionCounters = new ArrayList<>();
+
+    @Transient
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private Set<Game> games = new HashSet<>();
 

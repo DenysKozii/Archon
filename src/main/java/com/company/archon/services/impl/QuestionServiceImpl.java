@@ -132,26 +132,6 @@ public class QuestionServiceImpl implements QuestionService {
         return pageDto;
     }
 
-//    @Override
-//    public QuestionDto createNewQuestion(Long gamePatternId) {
-//        GamePattern gamePattern = gamePatternRepository.findById(gamePatternId)
-//                .orElseThrow(() -> new EntityNotFoundException("GamePattern with id " + gamePatternId + " not found"));
-//        Question question = new Question();
-//        question.setGamePattern(gamePattern);
-//        List<Parameter> parameters = parameterRepository.findAllByGamePattern(gamePattern);
-//        for (Parameter parameter: parameters) {
-//            QuestionParameter questionParameter = new QuestionParameter();
-//            questionParameter.setTitle(parameter.getTitle());
-//            questionParameter.setValueAppear(parameter.getLowestValue());
-//            questionParameter.setValueDisappear(parameter.getHighestValue());
-//
-//            questionParameter.setQuestion(question);
-//            questionParameterRepository.save(questionParameter);
-//        }
-//        questionRepository.save(question);
-//        return QuestionMapper.INSTANCE.mapToDto(question);
-//    }
-
     @Override
     public boolean deleteById(Long questionId) {
         Question question = questionRepository.findById(questionId)
