@@ -19,6 +19,7 @@ public class Question extends BaseEntity{
     @NonNull
     private String title;
     @NonNull
+    @Column(length = 1000)
     private String context;
 
     private GameStatus status = GameStatus.RUNNING;

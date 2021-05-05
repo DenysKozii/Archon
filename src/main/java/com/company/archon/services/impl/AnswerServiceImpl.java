@@ -1,6 +1,7 @@
 package com.company.archon.services.impl;
 
 import com.company.archon.dto.AnswerDto;
+import com.company.archon.dto.BaseDto;
 import com.company.archon.dto.GameDto;
 import com.company.archon.dto.QuestionDto;
 import com.company.archon.entity.*;
@@ -19,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,9 +41,13 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public List<AnswerDto> getAnswersByQuestionId(Long questionId) {
         List<Answer> answers = answerRepository.findAllByQuestionId(questionId);
-        return answers.stream()
+        List<AnswerDto> answerDtos = answers.stream()
                 .map(AnswerMapper.INSTANCE::mapToDto)
                 .collect(Collectors.toList());
+        answerDtos.forEach(o->o.setParameters(o.getParameters().stream()
+                .sorted(Comparator.comparingLong(BaseDto::getId))
+                .collect(Collectors.toList())));
+        return answerDtos;
     }
 
 //    @Override
