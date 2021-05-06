@@ -136,7 +136,13 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
         List<Answer> answers = answerRepository.findAllByQuestionId(questionId);
         question.setGamePattern(null);
+        question.setRelativeQuestion(null);
         questionRepository.save(question);
+        List<Question> relativeQuestions = questionRepository.findAllByRelativeQuestionId(questionId);
+        for (Question relativeQuestion: relativeQuestions) {
+            relativeQuestion.setRelativeQuestion(null);
+            questionRepository.save(relativeQuestion);
+        }
         answers.stream().peek(
                 answer -> answer.getParameters().forEach(answerParameterRepository::delete)
         ).forEach(answerRepository::delete);

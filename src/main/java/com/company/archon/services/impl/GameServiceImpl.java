@@ -245,7 +245,7 @@ public class GameServiceImpl implements GameService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
         user.getUserParameters()
-                .forEach(o -> o.setValue(Integer.min(1,
+                .forEach(o -> o.setValue(Integer.max(0,
                         o.getValue() + answerUserParameterRepository
                                 .findByTitleAndAnswer(o.getTitle(), answer)
                                 .orElseThrow(() -> new EntityNotFoundException("AnswerUserParameter with title " + o.getTitle() + " not found"))

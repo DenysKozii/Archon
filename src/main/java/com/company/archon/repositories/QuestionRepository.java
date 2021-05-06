@@ -12,6 +12,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long>, Pagin
 
     List<Question> findAllByGamePatternId(Long id);
 
+    List<Question> findAllByRelativeQuestionId(Long id);
+
     Page<Question> findAllByGamePatternId(Long id, Pageable pageable);
 
 }
