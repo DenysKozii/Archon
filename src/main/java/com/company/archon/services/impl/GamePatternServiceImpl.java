@@ -52,11 +52,6 @@ public class GamePatternServiceImpl implements GamePatternService {
     }
 
     private void fillConditionParameters(GamePattern gamePattern) {
-//        ConditionParameter parameter0 = new ConditionParameter();
-//        parameter0.setTitle("souls");
-//        parameter0.setValue(1);
-//        parameter0.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter0);
         ConditionParameter parameter0 = new ConditionParameter();
         parameter0.setTitle("Осколки душ");
         parameter0.setValue(0);
@@ -140,12 +135,6 @@ public class GamePatternServiceImpl implements GamePatternService {
         parameter13.setValue(0);
         parameter13.setGamePattern(gamePattern);
         conditionParameterRepository.save(parameter13);
-
-        ConditionParameter parameter14 = new ConditionParameter();
-        parameter14.setTitle("ASD");
-        parameter14.setValue(0);
-        parameter14.setGamePattern(gamePattern);
-        conditionParameterRepository.save(parameter14);
     }
 
     @Override
@@ -200,9 +189,13 @@ public class GamePatternServiceImpl implements GamePatternService {
     public boolean deleteById(Long gamePatternId) {
         GamePattern gamePattern = gamePatternRepository.findById(gamePatternId)
                 .orElseThrow(() -> new EntityNotFoundException("GamePattern with id " + gamePatternId + " not found"));
-        gamePattern.setDeleted(true);
-        gamePattern.setTitle("");
-        gamePatternRepository.save(gamePattern);
+//        gamePattern.setDeleted(true);
+//        gamePattern.setTitle("");
+//        gamePattern.getQuestions().forEach(o->questionService.deleteById(o.getId()));
+//        gamePattern.getGames().forEach(o->gameService.deleteById(o.getId()));
+//        gamePattern.getParameters().forEach(o->parameterService.deleteById(o.getId()));
+//        gamePattern.getConditionParameters().forEach(conditionParameterRepository::delete);
+        gamePatternRepository.delete(gamePattern);
         return true;
     }
 

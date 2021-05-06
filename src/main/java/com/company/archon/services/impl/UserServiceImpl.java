@@ -77,11 +77,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void fillUserParameters(User user) {
-//        UserParameter parameter0 = new UserParameter();
-//        parameter0.setTitle("souls");
-//        parameter0.setValue(1);
-//        parameter0.setUser(user);
-//        userParameterRepository.save(parameter0);
         UserParameter parameter0 = new UserParameter();
         parameter0.setTitle("Осколки душ");
         parameter0.setValue(1);
