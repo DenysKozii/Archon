@@ -13,4 +13,6 @@ public interface GameService {
     GameDto answerInfluence(Long answerId, Long gameId);
 
     boolean deleteById(Long gameId);
+
+    void freeData();
 }

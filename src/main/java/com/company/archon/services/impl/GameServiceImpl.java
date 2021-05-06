@@ -288,4 +288,10 @@ public class GameServiceImpl implements GameService {
         return true;
     }
 
+    @Override
+    public void freeData() {
+        List<Game> games = gameRepository.findAll();
+        games.forEach(gameRepository::delete);
+    }
+
 }

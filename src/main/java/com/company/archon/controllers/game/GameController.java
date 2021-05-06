@@ -24,6 +24,11 @@ public class GameController {
         model.addAttribute("game", game);
         return "game";
     }
+    @GetMapping("/free")
+    public String freeData() {
+        gameService.freeData();
+        return "redirect:/gamePattern/list";
+    }
 
     @PostMapping("/answer/{gameId}/{answerId}")
     public String checkAnswer(@PathVariable Long gameId,

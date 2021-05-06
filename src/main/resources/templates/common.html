@@ -29,6 +29,11 @@
             <a th:class="nav-link" href="/answer/statistics">Statistics</a>
         </li>
     </ul>
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a th:class="nav-link" href="/game/free">Clean</a>
+        </li>
+    </ul>
     <form th:action="@{/}" method="get">
         <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
         <button type="submit" class="btn btn-outline-secondary ml-3">Log out</button>
