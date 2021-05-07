@@ -4,6 +4,7 @@ package com.company.archon.services;
 import com.company.archon.dto.GameDto;
 import com.company.archon.dto.QuestionDto;
 import com.company.archon.entity.Game;
+import com.company.archon.entity.GamePattern;
 import com.company.archon.pagination.PageDto;
 
 public interface GameService {
@@ -15,4 +16,6 @@ public interface GameService {
     boolean deleteById(Long gameId);
 
     void freeData();
+
+    void freeDataByGamePattern(GamePattern gamePattern);
 }

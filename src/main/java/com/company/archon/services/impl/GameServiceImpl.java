@@ -134,7 +134,7 @@ public class GameServiceImpl implements GameService {
     }
 
     private void createQuestionCounter(Question question, User user) {
-        Optional<QuestionCounter> questionCounterOptional = questionCounterRepository.findByQuestionAndUser(question, user);
+        Optional<QuestionCounter> questionCounterOptional = questionCounterRepository.findByQuestionAndUserId(question, user.getId());
         if (!questionCounterOptional.isPresent()) {
             QuestionCounter questionCounter = new QuestionCounter();
             questionCounter.setQuestion(question);
@@ -172,7 +172,7 @@ public class GameServiceImpl implements GameService {
                     || GameStatus.COMPLETED.equals(question.getStatus())) {
                 return question;
             }
-            QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUser(question, user)
+            QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUserId(question, user.getId())
                     .orElseThrow(() -> new UsernameNotFoundException("QuestionCounter with user " + user.getUsername() + " doesn't exists!"));
             if (questionCounter.getTime() > Integer.min(5, questions.size())) {
                 questionCounter.setTime(0);
@@ -191,7 +191,7 @@ public class GameServiceImpl implements GameService {
         for (Question question : questions) {
             counter += question.getWeight();
             if (counter >= random) {
-                QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUser(question, user)
+                QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUserId(question, user.getId())
                         .orElseThrow(() -> new UsernameNotFoundException("QuestionCounter with user " + user.getUsername() + " doesn't exists!"));
                 questionCounter.setTime(questionCounter.getTime() + 1);
                 questionCounterRepository.save(questionCounter);
@@ -207,7 +207,7 @@ public class GameServiceImpl implements GameService {
 //                    || GameStatus.COMPLETED.equals(question.getStatus())) {
 //                return question;
 //            }
-//            QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUser(question, user)
+//            QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUserId(question, user)
 //                    .orElseThrow(() -> new UsernameNotFoundException("QuestionCounter with user " + user.getUsername() + " doesn't exists!"));
 //            if (questionCounter.getTime() > Integer.min(5, questions.size())) {
 //                questionCounter.setTime(0);
@@ -261,7 +261,6 @@ public class GameServiceImpl implements GameService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " doesn't exists!"));
 
-
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new EntityNotFoundException("Game with id " + gameId + " not found"));
         game.getParameters().stream()
@@ -270,8 +269,8 @@ public class GameServiceImpl implements GameService {
 
         List<Question> questions = questionRepository.findAllByGamePatternId(game.getGamePattern().getId());
         for (Question question: questions) {
-            QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUser(question, user)
-                    .orElseThrow(() -> new EntityNotFoundException("QuestionCounter with user " + username + " not found"));
+            QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUserId(question, user.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("QuestionCounter with userId " + user.getId() + " not found"));
             questionCounter.setUser(null);
             questionCounter.setQuestion(null);
             questionCounterRepository.save(questionCounter);
@@ -291,6 +290,12 @@ public class GameServiceImpl implements GameService {
     @Override
     public void freeData() {
         List<Game> games = gameRepository.findAll();
+        games.forEach(gameRepository::delete);
+    }
+
+    @Override
+    public void freeDataByGamePattern(GamePattern gamePattern) {
+        List<Game> games = gameRepository.findAllByGamePattern(gamePattern);
         games.forEach(gameRepository::delete);
     }
 

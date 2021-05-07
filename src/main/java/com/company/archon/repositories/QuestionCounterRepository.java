@@ -10,6 +10,6 @@ import java.util.Optional;
 
 public interface QuestionCounterRepository extends JpaRepository<QuestionCounter, Long>{
 
-    Optional<QuestionCounter> findByQuestionAndUser(Question question, User user);
+    Optional<QuestionCounter> findByQuestionAndUserId(Question question, Long userId);
 
 }

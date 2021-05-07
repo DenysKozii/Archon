@@ -1,19 +1,17 @@
 package com.company.archon.services.impl;
 
 import com.company.archon.dto.GamePatternDto;
-import com.company.archon.entity.ConditionParameter;
-import com.company.archon.entity.GamePattern;
-import com.company.archon.entity.User;
-import com.company.archon.entity.UserParameter;
+import com.company.archon.entity.*;
 import com.company.archon.exception.EntityNotFoundException;
 import com.company.archon.mapper.GamePatternMapper;
 import com.company.archon.pagination.PageDto;
 import com.company.archon.pagination.PagesUtility;
 import com.company.archon.repositories.ConditionParameterRepository;
 import com.company.archon.repositories.GamePatternRepository;
-import com.company.archon.repositories.QuestionRepository;
 import com.company.archon.repositories.UserRepository;
-import com.company.archon.services.*;
+import com.company.archon.services.AuthorizationService;
+import com.company.archon.services.GamePatternService;
+import com.company.archon.services.GameService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,10 +29,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GamePatternServiceImpl implements GamePatternService {
     private final GamePatternRepository gamePatternRepository;
-    private final ParameterService parameterService;
     private final GameService gameService;
-    private final QuestionService questionService;
-    private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final ConditionParameterRepository conditionParameterRepository;
     private final AuthorizationService authorizationService;
@@ -55,10 +50,15 @@ public class GamePatternServiceImpl implements GamePatternService {
 
     private void fillConditionParameters(GamePattern gamePattern) {
         ConditionParameter parameter0 = new ConditionParameter();
-        parameter0.setTitle("Осколки душ");
+        parameter0.setTitle("Souls");
         parameter0.setValue(0);
         parameter0.setGamePattern(gamePattern);
         conditionParameterRepository.save(parameter0);
+//        ConditionParameter parameter0 = new ConditionParameter();
+//        parameter0.setTitle("Осколки душ");
+//        parameter0.setValue(0);
+//        parameter0.setGamePattern(gamePattern);
+//        conditionParameterRepository.save(parameter0);
 
 //        ConditionParameter parameter1 = new ConditionParameter();
 //        parameter1.setTitle("Талант к магии");
@@ -190,10 +190,12 @@ public class GamePatternServiceImpl implements GamePatternService {
     public boolean deleteById(Long gamePatternId) {
         GamePattern gamePattern = gamePatternRepository.findById(gamePatternId)
                 .orElseThrow(() -> new EntityNotFoundException("GamePattern with id " + gamePatternId + " not found"));
-//        gamePattern.setDeleted(true);
+//        gameService.freeData();
+        //        gamePattern.setDeleted(true);
 //        gamePattern.setTitle("");
 //        gamePattern.getQuestions().forEach(o->questionService.deleteById(o.getId()));
 //        gamePattern.getGames().forEach(o->gameService.deleteById(o.getId()));
+        gameService.freeDataByGamePattern(gamePattern);
 //        gamePattern.getParameters().forEach(o->parameterService.deleteById(o.getId()));
 //        gamePattern.getConditionParameters().forEach(conditionParameterRepository::delete);
         gamePatternRepository.delete(gamePattern);
