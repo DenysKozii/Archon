@@ -61,8 +61,7 @@ public class GameServiceImpl implements GameService {
         createParameters(game, gamePattern);
         game.setUser(user);
         gameRepository.save(game);
-//        game.setQuestionsPull(changeQuestions(game, null));
-//        gameRepository.save(game);
+        createQuestionCounters(game, user);
 
         return mapToDto(game, null);
     }
@@ -128,25 +127,22 @@ public class GameServiceImpl implements GameService {
                                         .findByTitleAndUser(parameter.getTitle(), user)
                                         .orElseThrow(() -> new EntityNotFoundException("UserParameter with title " + parameter.getTitle() + " not found"))
                                         .getValue()))
-//                .filter(o -> checkQuestions(game, o))
-                .peek(question -> createQuestionCounter(question, user))
                 .collect(Collectors.toList());
     }
 
-    private void createQuestionCounter(Question question, User user) {
-        Optional<QuestionCounter> questionCounterOptional = questionCounterRepository.findByQuestionAndUserId(question, user.getId());
-        if (!questionCounterOptional.isPresent()) {
-            QuestionCounter questionCounter = new QuestionCounter();
-            questionCounter.setQuestion(question);
-            questionCounter.setUser(user);
-            questionCounter.setTime(0);
-            questionCounterRepository.save(questionCounter);
+    private void createQuestionCounters(Game game, User user) {
+        List<Question> questions = questionRepository.findAllByGamePatternId(game.getGamePattern().getId());
+        for (Question question:questions) {
+            Optional<QuestionCounter> questionCounterOptional = questionCounterRepository.findByQuestionAndUserId(question, user.getId());
+            if (!questionCounterOptional.isPresent()) {
+                QuestionCounter questionCounter = new QuestionCounter();
+                questionCounter.setQuestion(question);
+                questionCounter.setUser(user);
+                questionCounter.setTime(0);
+                questionCounterRepository.save(questionCounter);
+            }
         }
     }
-
-//    private boolean checkQuestions(Game game, Question question) {
-//        return game.getQuestionsPull().containsAll(question.getQuestionConditions());
-//    }
 
     private QuestionDto nextQuestion(Game game, Answer answer) {
         List<Question> questions = changeQuestions(game);
@@ -263,10 +259,6 @@ public class GameServiceImpl implements GameService {
 
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new EntityNotFoundException("Game with id " + gameId + " not found"));
-        game.getParameters().stream()
-                .map(GameParameter::getId)
-                .forEach(gameParameterService::deleteById);
-
         List<Question> questions = questionRepository.findAllByGamePatternId(game.getGamePattern().getId());
         for (Question question: questions) {
             QuestionCounter questionCounter = questionCounterRepository.findByQuestionAndUserId(question, user.getId())
@@ -276,6 +268,9 @@ public class GameServiceImpl implements GameService {
             questionCounterRepository.save(questionCounter);
             questionCounterRepository.delete(questionCounter);
         }
+        game.getParameters().stream()
+                .map(GameParameter::getId)
+                .forEach(gameParameterService::deleteById);
 
         game.setUser(null);
         game.setGamePattern(null);
