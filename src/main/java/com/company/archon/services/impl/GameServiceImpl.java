@@ -148,9 +148,9 @@ public class GameServiceImpl implements GameService {
         List<Question> questions = changeQuestions(game);
         game.setQuestionsPull(questions);
         gameRepository.save(game);
-        if (questions.size() == 0)
-            return null;
         Question question = randomQuestion(questions, answer);
+        if (questions == null)
+            return null;
         return QuestionMapper.INSTANCE.mapToDto(question);
     }
 
@@ -194,6 +194,8 @@ public class GameServiceImpl implements GameService {
                 return question;
             }
         }
+        if (questions.size() == 0)
+            return null;
         return questions.get(0);
     }
 
