@@ -178,8 +178,7 @@ public class GameServiceImpl implements GameService {
                 questionPull.add(question);
             }
         }
-
-        long summary = questionPull.stream()
+        long summary = questions.stream()
                 .map(Question::getWeight)
                 .reduce(0, Integer::sum);
         double random = Math.random() * summary;
@@ -194,8 +193,9 @@ public class GameServiceImpl implements GameService {
                 return question;
             }
         }
-        if (questions.size() == 0)
-            return null;
+//        Question question = randomQuestion(questions, answer);
+//        if (question == null)
+//            return null;
         return questions.get(0);
     }
 

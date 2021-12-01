@@ -31,10 +31,12 @@
                     <input type="text" class="form-control" th:placeholder="${question.getStatus()}"
                             disabled/>
                 </div>
-                <select name="status">
-                    <option th:each="statusOpt : ${T(com.company.archon.enums.GameStatus).values()}"
-                            th:value="${statusOpt}" th:text="${statusOpt.value}"></option>
-                </select>
+                <label>
+                    <select name="status">
+                        <option th:each="statusOpt : ${T(com.company.archon.enums.GameStatus).values()}"
+                                th:value="${statusOpt}" th:text="${statusOpt.value}"></option>
+                    </select>
+                </label>
 
                 <p></p>
                 <button type="submit" class="btn btn-lg btn-primary btn-block">Next</button>

@@ -12,6 +12,7 @@ import com.company.archon.repositories.UserRepository;
 import com.company.archon.services.AuthorizationService;
 import com.company.archon.services.GamePatternService;
 import com.company.archon.services.GameService;
+import com.company.archon.services.QuestionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class GamePatternServiceImpl implements GamePatternService {
     private final GamePatternRepository gamePatternRepository;
     private final GameService gameService;
+    private final QuestionService questionService;
     private final UserRepository userRepository;
     private final ConditionParameterRepository conditionParameterRepository;
     private final AuthorizationService authorizationService;
@@ -48,95 +50,27 @@ public class GamePatternServiceImpl implements GamePatternService {
         return GamePatternMapper.INSTANCE.mapToDto(gamePattern);
     }
 
-    private void fillConditionParameters(GamePattern gamePattern) {
-        ConditionParameter parameter0 = new ConditionParameter();
-        parameter0.setTitle("Souls");
-        parameter0.setValue(0);
-        parameter0.setGamePattern(gamePattern);
-        conditionParameterRepository.save(parameter0);
-//        ConditionParameter parameter0 = new ConditionParameter();
-//        parameter0.setTitle("Осколки душ");
-//        parameter0.setValue(0);
-//        parameter0.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter0);
+    private void fillParameter(String title, GamePattern gamePattern){
+        ConditionParameter parameter = new ConditionParameter();
+        parameter.setTitle(title);
+        parameter.setValue(0);
+        parameter.setGamePattern(gamePattern);
+        conditionParameterRepository.save(parameter);
+    }
 
-//        ConditionParameter parameter1 = new ConditionParameter();
-//        parameter1.setTitle("Талант к магии");
-//        parameter1.setValue(0);
-//        parameter1.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter1);
-//
-//        ConditionParameter parameter2 = new ConditionParameter();
-//        parameter2.setTitle("Смышленность");
-//        parameter2.setValue(0);
-//        parameter2.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter2);
-//
-//        ConditionParameter parameter3 = new ConditionParameter();
-//        parameter3.setTitle("Призрение к миру");
-//        parameter3.setValue(0);
-//        parameter3.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter3);
-//
-//        ConditionParameter parameter4 = new ConditionParameter();
-//        parameter4.setTitle("Талант к эфиру");
-//        parameter4.setValue(0);
-//        parameter4.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter4);
-//
-//        ConditionParameter parameter5 = new ConditionParameter();
-//        parameter5.setTitle("Талант к духу");
-//        parameter5.setValue(0);
-//        parameter5.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter5);
-//
-//        ConditionParameter parameter6 = new ConditionParameter();
-//        parameter6.setTitle("Харизма");
-//        parameter6.setValue(0);
-//        parameter6.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter6);
-//
-//        ConditionParameter parameter7 = new ConditionParameter();
-//        parameter7.setTitle("Интеллект");
-//        parameter7.setValue(0);
-//        parameter7.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter7);
-//
-//        ConditionParameter parameter8 = new ConditionParameter();
-//        parameter8.setTitle("Жестокость");
-//        parameter8.setValue(0);
-//        parameter8.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter8);
-//
-//        ConditionParameter parameter9 = new ConditionParameter();
-//        parameter9.setTitle("Манипуляции");
-//        parameter9.setValue(0);
-//        parameter9.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter9);
-//
-//        ConditionParameter parameter10 = new ConditionParameter();
-//        parameter10.setTitle("Единость с миром");
-//        parameter10.setValue(0);
-//        parameter10.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter10);
-//
-//        ConditionParameter parameter11 = new ConditionParameter();
-//        parameter11.setTitle("Правление");
-//        parameter11.setValue(0);
-//        parameter11.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter11);
-//
-//        ConditionParameter parameter12 = new ConditionParameter();
-//        parameter12.setTitle("Гениальность");
-//        parameter12.setValue(0);
-//        parameter12.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter12);
-//
-//        ConditionParameter parameter13 = new ConditionParameter();
-//        parameter13.setTitle("Кровожадность");
-//        parameter13.setValue(0);
-//        parameter13.setGamePattern(gamePattern);
-//        conditionParameterRepository.save(parameter13);
+    private void fillConditionParameters(GamePattern gamePattern) {
+        if (conditionParameterRepository.findAllByGamePatternId(gamePattern.getId()).size() < 9){
+//            fillParameter("осколки душ", gamePattern);
+//            fillParameter("прохождений чистилища", gamePattern);
+//            fillParameter("расположенность к магии", gamePattern);
+//            fillParameter("способности к эфиру", gamePattern);
+//            fillParameter("созидание", gamePattern);
+//            fillParameter("барьер", gamePattern);
+//            fillParameter("контроль тела", gamePattern);
+//            fillParameter("исцеление", gamePattern);
+//            fillParameter("усиление", gamePattern);
+            fillParameter("этаж", gamePattern);
+        }
     }
 
     @Override
@@ -193,7 +127,7 @@ public class GamePatternServiceImpl implements GamePatternService {
 //        gameService.freeData();
         //        gamePattern.setDeleted(true);
 //        gamePattern.setTitle("");
-//        gamePattern.getQuestions().forEach(o->questionService.deleteById(o.getId()));
+        gamePattern.getQuestions().forEach(o->questionService.deleteById(o.getId()));
 //        gamePattern.getGames().forEach(o->gameService.deleteById(o.getId()));
         gameService.freeDataByGamePattern(gamePattern);
 //        gamePattern.getParameters().forEach(o->parameterService.deleteById(o.getId()));
